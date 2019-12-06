@@ -9,70 +9,70 @@ public class VersionTest {
 
   @Test
   public void testNullVersion() {
-    assertTrue(new Version("").after(null));
-    assertTrue(new Version("1").after(null));
-    assertTrue(new Version("a").after(null));
-    assertTrue(new Version("1.2").after(null));
-    assertTrue(new Version("a.b").after(null));
+    assertTrue(new VersionNumber("").after(null));
+    assertTrue(new VersionNumber("1").after(null));
+    assertTrue(new VersionNumber("a").after(null));
+    assertTrue(new VersionNumber("1.2").after(null));
+    assertTrue(new VersionNumber("a.b").after(null));
   }
 
   @Test
   public void testSame() {
-    assertTrue(new Version("").same(new Version("")));
-    assertTrue(new Version("1").same(new Version("1")));
-    assertTrue(new Version("0").same(new Version("0")));
-    assertTrue(new Version("1.2").same(new Version("1.2")));
-    assertTrue(new Version("a").same(new Version("a")));
-    assertTrue(new Version("b").same(new Version("b")));
-    assertTrue(new Version("a.b").same(new Version("a.b")));
+    assertTrue(new VersionNumber("").same(new VersionNumber("")));
+    assertTrue(new VersionNumber("1").same(new VersionNumber("1")));
+    assertTrue(new VersionNumber("0").same(new VersionNumber("0")));
+    assertTrue(new VersionNumber("1.2").same(new VersionNumber("1.2")));
+    assertTrue(new VersionNumber("a").same(new VersionNumber("a")));
+    assertTrue(new VersionNumber("b").same(new VersionNumber("b")));
+    assertTrue(new VersionNumber("a.b").same(new VersionNumber("a.b")));
 
-    assertTrue(new Version("a.").same(new Version("a.")));
-    assertTrue(new Version(".a").same(new Version(".a")));
-    assertTrue(new Version("1.").same(new Version("1.")));
-    assertTrue(new Version(".1").same(new Version(".1")));
+    assertTrue(new VersionNumber("a.").same(new VersionNumber("a.")));
+    assertTrue(new VersionNumber(".a").same(new VersionNumber(".a")));
+    assertTrue(new VersionNumber("1.").same(new VersionNumber("1.")));
+    assertTrue(new VersionNumber(".1").same(new VersionNumber(".1")));
 
-    assertTrue(new Version("a.b.").same(new Version("a.b.")));
-    assertTrue(new Version(".a.b").same(new Version(".a.b")));
-    assertTrue(new Version("1.2.").same(new Version("1.2.")));
-    assertTrue(new Version(".1.2").same(new Version(".1.2")));
+    assertTrue(new VersionNumber("a.b.").same(new VersionNumber("a.b.")));
+    assertTrue(new VersionNumber(".a.b").same(new VersionNumber(".a.b")));
+    assertTrue(new VersionNumber("1.2.").same(new VersionNumber("1.2.")));
+    assertTrue(new VersionNumber(".1.2").same(new VersionNumber(".1.2")));
 
-    assertTrue(new Version("1.a").same(new Version("1.a")));
+    assertTrue(new VersionNumber("1.a").same(new VersionNumber("1.a")));
   }
 
   @Test
   public void testBefore() {
-    ba(new Version(""), new Version("a"));
-    ba(new Version(""), new Version("1"));
-    ba(new Version(""), new Version("a.b"));
-    ba(new Version(""), new Version("1.2"));
+    ba(new VersionNumber(""), new VersionNumber("a"));
+    ba(new VersionNumber(""), new VersionNumber("1"));
+    ba(new VersionNumber(""), new VersionNumber("a.b"));
+    ba(new VersionNumber(""), new VersionNumber("1.2"));
 
-    ba(new Version("1"), new Version("2"));
-    ba(new Version("0"), new Version("1"));
-    ba(new Version("a"), new Version("b"));
-    ba(new Version("A"), new Version("B"));
+    ba(new VersionNumber("1"), new VersionNumber("2"));
+    ba(new VersionNumber("0"), new VersionNumber("1"));
+    ba(new VersionNumber("a"), new VersionNumber("b"));
+    ba(new VersionNumber("A"), new VersionNumber("B"));
 
-    ba(new Version("9"), new Version("10"));
-    ba(new Version("A"), new Version("a"));
+    ba(new VersionNumber("9"), new VersionNumber("10"));
+    ba(new VersionNumber("A"), new VersionNumber("a"));
 
-    ba(new Version("1.0"), new Version("1.1"));
-    ba(new Version("1.0"), new Version("1.0."));
-    ba(new Version("1.0"), new Version("1.0.3"));
-    ba(new Version("1.0."), new Version("1.0.3"));
+    ba(new VersionNumber("1.0"), new VersionNumber("1.1"));
+    ba(new VersionNumber("1.0"), new VersionNumber("1.0."));
+    ba(new VersionNumber("1.0"), new VersionNumber("1.0.3"));
+    ba(new VersionNumber("1.0."), new VersionNumber("1.0.3"));
 
-    ba(new Version("1.9"), new Version("1.10"));
-    ba(new Version("1.a.5"), new Version("1.a.6"));
-    ba(new Version("a.b"), new Version("a.c"));
-    ba(new Version("a.b"), new Version("a.b."));
-    ba(new Version("a.b"), new Version("a.b.c"));
-    ba(new Version("a.b."), new Version("a.b.c"));
+    ba(new VersionNumber("1.9"), new VersionNumber("1.10"));
+    ba(new VersionNumber("1.a.5"), new VersionNumber("1.a.6"));
+    ba(new VersionNumber("a.b"), new VersionNumber("a.c"));
+    ba(new VersionNumber("a.b"), new VersionNumber("a.b."));
+    ba(new VersionNumber("a.b"), new VersionNumber("a.b.c"));
+    ba(new VersionNumber("a.b."), new VersionNumber("a.b.c"));
 
-    ba(new Version("1.5.4.3.2"), new Version("1.5.4.3.3"));
+    ba(new VersionNumber("1.5.4.3.2"), new VersionNumber("1.5.4.3.3"));
 
-    ba(new Version("a.e.d.c.b"), new Version("a.e.d.c.c"));
+    ba(new VersionNumber("a.e.d.c.b"), new VersionNumber("a.e.d.c.c"));
 
   }
 
-  public void ba(final Version vb, final Version va) {
+  public void ba(final VersionNumber vb, final VersionNumber va) {
     assertNotNull(vb);
     assertNotNull(va);
     assertTrue(vb.before(va));

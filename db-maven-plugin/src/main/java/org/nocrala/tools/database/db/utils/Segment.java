@@ -64,6 +64,10 @@ public class Segment implements Comparable<Segment> {
     return this.type == Type.EMPTY ? "e:" : (this.type == Type.NUMERIC ? ("n:" + this.n) : ("s:" + this.s));
   }
 
+  String renderPlain() {
+    return this.type == Type.EMPTY ? "" : (this.type == Type.NUMERIC ? ("" + this.n) : ("" + this.s));
+  }
+
   // Comparable<Segment>
 
   public int compareTo(final Segment s) {

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Version implements Comparable<Version> {
+public class VersionNumber implements Comparable<VersionNumber> {
 
   private List<Segment> segments;
 
-  public Version(final String version) {
+  public VersionNumber(final String version) {
     log("* version='" + version + "'");
 
     this.segments = new ArrayList<Segment>();
@@ -29,21 +29,43 @@ public class Version implements Comparable<Version> {
     log("======");
   }
 
-  public boolean same(final Version other) {
+  public boolean same(final VersionNumber other) {
     return this.compareTo(other) == 0;
   }
 
-  public boolean before(final Version other) {
+  public boolean before(final VersionNumber other) {
     return this.compareTo(other) < 0;
   }
 
-  public boolean after(final Version other) {
+  public boolean after(final VersionNumber other) {
     return this.compareTo(other) > 0;
+  }
+
+  // Indexable
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((segments == null) ? 0 : segments.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    VersionNumber other = (VersionNumber) obj;
+    return this.same(other);
   }
 
   // Comparable<Version>
 
-  public int compareTo(final Version other) {
+  public int compareTo(final VersionNumber other) {
     if (other == null) {
       return 1; // null is always before everything
     }
@@ -70,6 +92,20 @@ public class Version implements Comparable<Version> {
     }
     log(" - return 0");
     return 0;
+  }
+
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (Segment s : this.segments) {
+      if (first) {
+        first = false;
+      } else {
+        sb.append(".");
+      }
+      sb.append(s.renderPlain());
+    }
+    return sb.toString();
   }
 
   private void log(final String txt) {
