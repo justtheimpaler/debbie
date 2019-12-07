@@ -1,6 +1,9 @@
 package org.nocrala.tools.database.db.source;
 
 import java.io.File;
+import java.sql.SQLException;
+
+import org.nocrala.tools.database.db.executor.SQLExecutor;
 
 public class Scenario {
 
@@ -14,9 +17,10 @@ public class Scenario {
 
   // Build
 
-  public void build() {
+  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue) throws SQLException {
     if (this.buildData.exists() && this.buildData.isFile()) {
       System.out.println("-- running " + this.buildData);
+      sqlExecutor.run(this.buildData, onErrorContinue);
     } else {
       System.out.println("-- " + this.buildData + " does not exist -- skipped");
     }

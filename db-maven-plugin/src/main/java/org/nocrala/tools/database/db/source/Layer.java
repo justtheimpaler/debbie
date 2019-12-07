@@ -1,9 +1,11 @@
 package org.nocrala.tools.database.db.source;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
 public class Layer {
@@ -36,26 +38,29 @@ public class Layer {
 
   // Build
 
-  public void build() {
+  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue) throws SQLException {
     if (this.build.exists() && this.build.isFile()) {
       System.out.println("-- running " + this.build);
+      sqlExecutor.run(this.build, onErrorContinue);
     } else {
       System.out.println("-- " + this.build + " does not exist -- skipped");
     }
   }
 
-  public void clean() {
+  public void clean(final SQLExecutor sqlExecutor, final boolean onErrorContinue) throws SQLException {
     if (this.clean.exists() && this.clean.isFile()) {
       System.out.println("-- running " + this.clean);
+      sqlExecutor.run(this.clean, onErrorContinue);
     } else {
       System.out.println("-- " + this.clean + " does not exist -- skipped");
     }
   }
 
-  public void buildScenario(final String name) {
+  public void buildScenario(final String name, final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+      throws SQLException {
     Scenario s = this.scenarios.get(name);
     if (s != null) {
-      s.build();
+      s.build(sqlExecutor, onErrorContinue);
     } else {
       System.out.println("-- " + new File(this.scenariosDir, name) + " scenario does not exist -- skipped");
     }
@@ -65,18 +70,6 @@ public class Layer {
 
   public VersionNumber getVersionNumber() {
     return versionNumber;
-  }
-
-  public File getBuild() {
-    return build;
-  }
-
-  public File getClean() {
-    return clean;
-  }
-
-  public Map<String, Scenario> getScenarios() {
-    return scenarios;
   }
 
 }
