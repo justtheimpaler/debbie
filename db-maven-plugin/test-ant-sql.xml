@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project name="test-ant-sql" default="sql" basedir=".">
+
+  <loadproperties srcFile="testdata/ant/ant.properties" />
+
+  <target name="sql">
+    <sql driver="${jdbc.driverclass}"
+         classpath="${jdbc.driverclasspath}"
+         url="${jdbc.url}"
+         userid="${jdbc.username}"
+         password="${jdbc.password}"
+         autocommit="true"
+         keepformat="true"
+         delimiter="//"
+         onerror="abort">
+      <fileset file="testdata/ant/ant-sql-1.sql" />
+    </sql>
+  </target>
+
+</project>
