@@ -1,11 +1,12 @@
 package org.nocrala.tools.database.db.source;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.nocrala.tools.database.db.executor.SQLExecutor;
+import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
+import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
 public class Layer {
@@ -38,18 +39,20 @@ public class Layer {
 
   // Build
 
-  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue) throws SQLException {
+  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.build.exists() && this.build.isFile()) {
-      System.out.println("-- running " + this.build);
+      // System.out.println("-- running " + this.build);
       sqlExecutor.run(this.build, onErrorContinue);
     } else {
       System.out.println("-- " + this.build + " does not exist -- skipped");
     }
   }
 
-  public void clean(final SQLExecutor sqlExecutor, final boolean onErrorContinue) throws SQLException {
+  public void clean(final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.clean.exists() && this.clean.isFile()) {
-      System.out.println("-- running " + this.clean);
+      // System.out.println("-- running " + this.clean);
       sqlExecutor.run(this.clean, onErrorContinue);
     } else {
       System.out.println("-- " + this.clean + " does not exist -- skipped");
@@ -57,7 +60,7 @@ public class Layer {
   }
 
   public void buildScenario(final String name, final SQLExecutor sqlExecutor, final boolean onErrorContinue)
-      throws SQLException {
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Scenario s = this.scenarios.get(name);
     if (s != null) {
       s.build(sqlExecutor, onErrorContinue);

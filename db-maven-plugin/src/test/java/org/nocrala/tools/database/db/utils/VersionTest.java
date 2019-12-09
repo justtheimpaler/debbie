@@ -67,9 +67,7 @@ public class VersionTest {
     ba(new VersionNumber("a.b."), new VersionNumber("a.b.c"));
 
     ba(new VersionNumber("1.5.4.3.2"), new VersionNumber("1.5.4.3.3"));
-
     ba(new VersionNumber("a.e.d.c.b"), new VersionNumber("a.e.d.c.c"));
-
   }
 
   public void ba(final VersionNumber vb, final VersionNumber va) {

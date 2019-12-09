@@ -1,10 +1,11 @@
 package org.nocrala.tools.database.db.source;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.TreeMap;
 
 import org.nocrala.tools.database.db.executor.SQLExecutor;
+import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
+import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
 public class Source {
@@ -20,6 +21,8 @@ public class Source {
   public Source(final File sourceDir, final boolean layeredBuild, final boolean layeredScenarios,
       final boolean buildOnErrorContinue, final boolean cleanOnErrorContinue) {
 
+    System.out.println(">>> 1");
+
     if (sourceDir == null) {
       throw new IllegalArgumentException("sourcedir cannot be null");
     }
@@ -33,6 +36,8 @@ public class Source {
     if (!layeredBuild && layeredScenarios) {
       throw new IllegalArgumentException("layered scenarios cannot be enabled when builds are not layered");
     }
+
+    System.out.println(">>> 2");
 
     this.sourceDir = sourceDir;
     this.layeredBuild = layeredBuild;
@@ -52,7 +57,7 @@ public class Source {
   }
 
   public void build(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws SQLException {
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
       throw new IllegalArgumentException(
@@ -75,7 +80,8 @@ public class Source {
 
   }
 
-  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor) throws SQLException {
+  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
       throw new IllegalArgumentException(
@@ -95,23 +101,25 @@ public class Source {
   }
 
   public void rebuild(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws SQLException {
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     clean(currentVersion, sqlExecutor);
     build(currentVersion, scenarioName, sqlExecutor);
   }
 
   // Delegate methods
 
-  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor) throws SQLException {
+  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     l.build(sqlExecutor, this.buildOnErrorContinue);
   }
 
   private void buildScenario(final Layer l, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws SQLException {
-      l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue);
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+    l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue);
   }
 
-  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor) throws SQLException {
+  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     l.clean(sqlExecutor, this.cleanOnErrorContinue);
   }
 
