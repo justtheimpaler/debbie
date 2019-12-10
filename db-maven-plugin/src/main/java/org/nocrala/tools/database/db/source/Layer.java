@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
@@ -39,31 +40,33 @@ public class Layer {
 
   // Build
 
-  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.build.exists() && this.build.isFile()) {
-      // System.out.println("-- running " + this.build);
-      sqlExecutor.run(this.build, onErrorContinue);
+      sqlExecutor.run(this.build, onErrorContinue, feedback);
     } else {
       System.out.println("" + this.build + ": not found -- skipped");
     }
   }
 
-  public void clean(final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+  // Clean
+
+  public void clean(final SQLExecutor sqlExecutor, final boolean onErrorContinue, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.clean.exists() && this.clean.isFile()) {
-      // System.out.println("-- running " + this.clean);
-      sqlExecutor.run(this.clean, onErrorContinue);
+      sqlExecutor.run(this.clean, onErrorContinue, feedback);
     } else {
       System.out.println("" + this.clean + ": not found -- skipped");
     }
   }
 
-  public void buildScenario(final String name, final SQLExecutor sqlExecutor, final boolean onErrorContinue)
-      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+  // Scenario
+
+  public void buildScenario(final String name, final SQLExecutor sqlExecutor, final boolean onErrorContinue,
+      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Scenario s = this.scenarios.get(name);
     if (s != null) {
-      s.build(sqlExecutor, onErrorContinue);
+      s.build(sqlExecutor, onErrorContinue, feedback);
     } else {
       System.out.println("" + new File(this.scenariosDir, name) + ": not found -- skipped");
     }

@@ -3,6 +3,7 @@ package org.nocrala.tools.database.db.source;
 import java.io.File;
 import java.util.TreeMap;
 
+import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
@@ -52,8 +53,8 @@ public class Source {
 
   }
 
-  public void build(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+  public void build(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor,
+      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
       throw new IllegalArgumentException(
@@ -63,20 +64,20 @@ public class Source {
     if (this.layeredBuild) {
       for (VersionNumber v : this.layers.keySet()) {
         if (!v.after(currentVersion)) {
-          buildLayer(this.layers.get(v), sqlExecutor);
+          buildLayer(this.layers.get(v), sqlExecutor, feedback);
           if (this.layeredScenarios || v.same(currentVersion)) {
-            buildScenario(this.layers.get(v), scenarioName, sqlExecutor);
+            buildScenario(this.layers.get(v), scenarioName, sqlExecutor, feedback);
           }
         }
       }
     } else {
-      buildLayer(l, sqlExecutor);
-      buildScenario(l, scenarioName, sqlExecutor);
+      buildLayer(l, sqlExecutor, feedback);
+      buildScenario(l, scenarioName, sqlExecutor, feedback);
     }
 
   }
 
-  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor)
+  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
@@ -87,36 +88,36 @@ public class Source {
     if (this.layeredBuild) {
       for (VersionNumber v : this.layers.descendingKeySet()) {
         if (!v.after(currentVersion)) {
-          cleanLayer(this.layers.get(v), sqlExecutor);
+          cleanLayer(this.layers.get(v), sqlExecutor, feedback);
         }
       }
     } else {
-      cleanLayer(l, sqlExecutor);
+      cleanLayer(l, sqlExecutor, feedback);
     }
 
   }
 
-  public void rebuild(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    clean(currentVersion, sqlExecutor);
-    build(currentVersion, scenarioName, sqlExecutor);
+  public void rebuild(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor,
+      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+    clean(currentVersion, sqlExecutor, feedback);
+    build(currentVersion, scenarioName, sqlExecutor, feedback);
   }
 
   // Delegate methods
 
-  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor)
+  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.build(sqlExecutor, this.buildOnErrorContinue);
+    l.build(sqlExecutor, this.buildOnErrorContinue, feedback);
   }
 
-  private void buildScenario(final Layer l, final String scenarioName, final SQLExecutor sqlExecutor)
-      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue);
+  private void buildScenario(final Layer l, final String scenarioName, final SQLExecutor sqlExecutor,
+      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+    l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue, feedback);
   }
 
-  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor)
+  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.clean(sqlExecutor, this.cleanOnErrorContinue);
+    l.clean(sqlExecutor, this.cleanOnErrorContinue, feedback);
   }
 
   // toString()

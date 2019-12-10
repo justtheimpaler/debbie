@@ -2,6 +2,7 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
+import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
@@ -18,11 +19,10 @@ public class Scenario {
 
   // Build
 
-  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue)
+  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.buildData.exists() && this.buildData.isFile()) {
-//      System.out.println("-- running " + this.buildData);
-      sqlExecutor.run(this.buildData, onErrorContinue);
+      sqlExecutor.run(this.buildData, onErrorContinue, feedback);
     } else {
       System.out.println("-- " + this.buildData + " does not exist -- skipped");
     }

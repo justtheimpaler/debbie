@@ -1,4 +1,5 @@
 
+  -- tables
 
 create table port (
   id int primary key not null,

@@ -67,7 +67,7 @@ public class SQLExecutor {
 
   // typical delimiters: ; // go (separated line)
 
-  public void run(final File f, final boolean onErrorContinue)
+  public void run(final File f, final boolean onErrorContinue, final Feedback feedback)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
     ScriptStatement st = null;
@@ -80,18 +80,18 @@ public class SQLExecutor {
           stats.addFailed();
           String msg = "Failed to execute statement (" + f + ":" + st.getLine() + "):\n" + st.getSql() + "\n"
               + e.getMessage();
-          System.out.println(msg);
+          feedback.info(msg);
           if (onErrorContinue) {
-            System.out.println("-- continuing... ");
-            System.out.println();
+            feedback.info("-- continuing... ");
+            feedback.info("");
           } else {
             stats.setFailedSQLStatement(st);
-            System.out.println(f + ": " + stats.render());
+            feedback.info(f + " -- " + stats.render());
             throw new SQLScriptAbortedException(msg, e);
           }
         }
       }
-      System.out.println(f + ": " + stats.render());
+      feedback.info(f + " -- " + stats.render());
     } catch (IOException e) {
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
     }

@@ -41,32 +41,31 @@ public class SourceTest {
     try {
       sqlExecutor = new SQLExecutor(propsFile);
     } catch (InvalidPropertiesFileException e) {
-      System.out.println("Invalid properties file.");
-      System.out.println(" -> " + renderException(e));
+      System.out.println("Invalid properties file: " + renderException(e));
       e.printStackTrace();
       return;
     } catch (CouldNotConnectToDatabaseException e) {
-      System.out.println("Could not connect to database.");
-      System.out.println(" -> " + renderException(e));
+      System.out.println("Could not connect to database: " + renderException(e));
       e.printStackTrace();
       return;
     }
 
     try {
 
-       s.build(currentVersion, scenario, sqlExecutor);
-//       s.clean(currentVersion, sqlExecutor);
-//      s.rebuild(currentVersion, scenario, sqlExecutor);
+      TestFeedback feedback = new TestFeedback();
+      s.build(currentVersion, scenario, sqlExecutor, feedback);
+//       s.clean(currentVersion, sqlExecutor, feedback );
+//      s.rebuild(currentVersion, scenario, sqlExecutor, feedback );
 
     } catch (CouldNotReadSQLScriptException e) {
-      System.out.println("Could not read SQL script file.");
-      System.out.println(" -> " + renderException(e));
-      e.printStackTrace();
+//      System.out.println("Could not read SQL script file.");
+//      System.out.println(" -> " + renderException(e));
+//      e.printStackTrace();
       return;
     } catch (SQLScriptAbortedException e) {
-      System.out.println("SQL statement failed.");
-      System.out.println(" -> " + renderException(e));
-      e.printStackTrace();
+//      System.out.println("SQL statement failed.");
+//      System.out.println(" -> " + renderException(e));
+//      e.printStackTrace();
       return;
     }
 
