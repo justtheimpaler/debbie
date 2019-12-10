@@ -54,9 +54,9 @@ public class SourceTest {
 
     try {
 
-      // s.build(currentVersion, scenario, sqlExecutor);
-      // s.clean(currentVersion, sqlExecutor);
-      s.rebuild(currentVersion, scenario, sqlExecutor);
+       s.build(currentVersion, scenario, sqlExecutor);
+//       s.clean(currentVersion, sqlExecutor);
+//      s.rebuild(currentVersion, scenario, sqlExecutor);
 
     } catch (CouldNotReadSQLScriptException e) {
       System.out.println("Could not read SQL script file.");

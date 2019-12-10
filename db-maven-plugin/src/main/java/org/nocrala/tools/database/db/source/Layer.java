@@ -45,7 +45,7 @@ public class Layer {
       // System.out.println("-- running " + this.build);
       sqlExecutor.run(this.build, onErrorContinue);
     } else {
-      System.out.println("-- " + this.build + " does not exist -- skipped");
+      System.out.println("" + this.build + ": not found -- skipped");
     }
   }
 
@@ -55,7 +55,7 @@ public class Layer {
       // System.out.println("-- running " + this.clean);
       sqlExecutor.run(this.clean, onErrorContinue);
     } else {
-      System.out.println("-- " + this.clean + " does not exist -- skipped");
+      System.out.println("" + this.clean + ": not found -- skipped");
     }
   }
 
@@ -65,7 +65,7 @@ public class Layer {
     if (s != null) {
       s.build(sqlExecutor, onErrorContinue);
     } else {
-      System.out.println("-- " + new File(this.scenariosDir, name) + " scenario does not exist -- skipped");
+      System.out.println("" + new File(this.scenariosDir, name) + ": not found -- skipped");
     }
   }
 

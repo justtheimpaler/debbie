@@ -11,25 +11,33 @@ public class SQLScript implements Closeable {
   private BufferedReader r;
   private String delimiter;
 
+  private int startLineNumber;
+  private int startPos;
+
   private String encloser;
   private String line;
+  private int lineNumber;
   private int pos;
   private StringBuilder sb;
 
   public SQLScript(final File f, final String delimiter) throws IOException {
+    System.out.println("-------------------- SQL SCRIPT");
     this.r = new BufferedReader(new FileReader(f));
     this.sb = new StringBuilder();
     this.encloser = null;
     this.delimiter = delimiter;
+    this.lineNumber = 0;
     nextLine();
   }
 
   private void nextLine() throws IOException {
+    this.lineNumber++;
+    System.out.println("-------------------- lineNumber="+this.lineNumber);
     this.line = this.r.readLine();
     this.pos = 0;
   }
 
-  public String readStatement() throws IOException {
+  public ScriptStatement readStatement() throws IOException {
     String sql;
     do {
       if (this.line == null) {
@@ -39,7 +47,7 @@ public class SQLScript implements Closeable {
       readUntilNextDelimiter();
       sql = this.sb.toString().trim();
     } while (sql.isEmpty());
-    return sql;
+    return new ScriptStatement(this.startLineNumber, this.startPos, sql);
   }
 
   private static final String SQ = "'";
@@ -47,6 +55,9 @@ public class SQLScript implements Closeable {
   private static final String COMMENT = "--";
 
   private void readUntilNextDelimiter() throws IOException {
+
+    this.startLineNumber = this.lineNumber;
+    this.startPos = this.pos;
 
     boolean delimiterFound = false;
     while (!delimiterFound && this.line != null) {
@@ -102,6 +113,34 @@ public class SQLScript implements Closeable {
   @Override
   public void close() throws IOException {
     this.r.close();
+  }
+
+  // Classes
+
+  public static class ScriptStatement {
+
+    private int line;
+    private int col;
+    private String sql;
+
+    public ScriptStatement(final int line, final int col, final String sql) {
+      this.line = line;
+      this.col = col;
+      this.sql = sql;
+    }
+
+    public int getLine() {
+      return line;
+    }
+
+    public int getCol() {
+      return col;
+    }
+
+    public String getSql() {
+      return sql;
+    }
+
   }
 
 }

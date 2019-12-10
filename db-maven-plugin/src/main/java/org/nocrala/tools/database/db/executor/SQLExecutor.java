@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.nocrala.tools.database.db.executor.SQLScript.ScriptStatement;
+
 public class SQLExecutor {
 
   private static final String JDBC_DRIVER_CLASS_PROP = "jdbc.driverclass";
@@ -23,7 +25,7 @@ public class SQLExecutor {
   private String jdbcPassword;
 
   private Connection conn;
-  private Statement st;
+  private Statement stmt;
 
   public SQLExecutor(final File localdatabaseproperties)
       throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
@@ -53,10 +55,10 @@ public class SQLExecutor {
     }
 
     this.conn = null;
-    this.st = null;
+    this.stmt = null;
     try {
       connect();
-      this.st = this.conn.createStatement();
+      this.stmt = this.conn.createStatement();
     } catch (SQLException e) {
       throw new CouldNotConnectToDatabaseException("Could not connect to database", e);
     }
@@ -68,19 +70,22 @@ public class SQLExecutor {
   public void run(final File f, final boolean onErrorContinue)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
-    String sql = null;
+    ScriptStatement st = null;
     try (SQLScript script = new SQLScript(f, ";")) {
-      while ((sql = script.readStatement()) != null) {
+      while ((st = script.readStatement()) != null) {
         try {
-          this.st.execute(sql);
+          this.stmt.execute(st.getSql());
           stats.addSuccessful();
         } catch (SQLException e) {
           stats.addFailed();
-          String msg = "Failed to execute (" + f + "):\n" + sql + "\n" + e.getMessage();
+          String msg = "Failed to execute statement (" + f + ":" + st.getLine() + "):\n" + st.getSql() + "\n"
+              + e.getMessage();
           System.out.println(msg);
-          System.out.println();
-          if (!onErrorContinue) {
-            stats.setFailedSQLStatement(sql);
+          if (onErrorContinue) {
+            System.out.println("-- continuing... ");
+            System.out.println();
+          } else {
+            stats.setFailedSQLStatement(st);
             System.out.println(f + ": " + stats.render());
             throw new SQLScriptAbortedException(msg, e);
           }

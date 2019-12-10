@@ -1,7 +1,10 @@
+
+
 create table port (
   id int primary key not null,
   name varchar(20) not null
 );
+
 
 create table ship (
   id int primary key not null,

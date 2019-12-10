@@ -1,11 +1,13 @@
 package org.nocrala.tools.database.db.executor;
 
+import org.nocrala.tools.database.db.executor.SQLScript.ScriptStatement;
+
 public class SQLStats {
 
   private int successful = 0;
   private int failed = 0;
 
-  private String failedSQLStatement = null;
+  private ScriptStatement failedSQLStatement = null;
 
   public void addSuccessful() {
     this.successful++;
@@ -23,11 +25,11 @@ public class SQLStats {
     return this.failed;
   }
 
-  public String getFailedSQLStatement() {
+  public ScriptStatement getFailedSQLStatement() {
     return failedSQLStatement;
   }
 
-  public void setFailedSQLStatement(String failedSQLStatement) {
+  public void setFailedSQLStatement(ScriptStatement failedSQLStatement) {
     this.failedSQLStatement = failedSQLStatement;
   }
 

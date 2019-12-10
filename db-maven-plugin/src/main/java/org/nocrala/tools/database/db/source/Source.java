@@ -21,8 +21,6 @@ public class Source {
   public Source(final File sourceDir, final boolean layeredBuild, final boolean layeredScenarios,
       final boolean buildOnErrorContinue, final boolean cleanOnErrorContinue) {
 
-    System.out.println(">>> 1");
-
     if (sourceDir == null) {
       throw new IllegalArgumentException("sourcedir cannot be null");
     }
@@ -36,8 +34,6 @@ public class Source {
     if (!layeredBuild && layeredScenarios) {
       throw new IllegalArgumentException("layered scenarios cannot be enabled when builds are not layered");
     }
-
-    System.out.println(">>> 2");
 
     this.sourceDir = sourceDir;
     this.layeredBuild = layeredBuild;
