@@ -11,9 +11,9 @@
          password="${jdbc.password}"
          autocommit="true"
          keepformat="true"
-         delimiter="//"
+         delimiter=";"
          onerror="abort">
-      <fileset file="testdata/ant/ant-sql-1.sql" />
+      <fileset file="testdata/ant/${jdbc.script}" />
     </sql>
   </target>
 
