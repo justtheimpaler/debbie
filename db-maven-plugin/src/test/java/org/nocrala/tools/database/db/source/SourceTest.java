@@ -8,6 +8,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatab
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
+import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
 public class SourceTest {
@@ -15,6 +16,11 @@ public class SourceTest {
   @Test
   public void testMain() {
 
+    // performTest();
+
+  }
+
+  private void performTest() {
     // Parameters
 
     String databaseDir = "testdata/dbsrc";
@@ -30,45 +36,52 @@ public class SourceTest {
 
     // Execution
 
+    TestFeedback feedback = new TestFeedback();
+
     File dbdir = new File(databaseDir);
     File propsFile = new File(localdatabaseproperties);
     VersionNumber currentVersion = new VersionNumber(version);
 
-    Source s = new Source(dbdir, layeredBuild, layeredScenarios, buildOnErrorContinue, cleanOnErrorContinue);
+    Source s;
+    try {
+      s = new Source(dbdir, layeredBuild, layeredScenarios, buildOnErrorContinue, cleanOnErrorContinue, feedback);
+    } catch (InvalidDatabaseSourceException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+      return;
+    }
 
     SQLExecutor sqlExecutor = null;
 
     try {
-      sqlExecutor = new SQLExecutor(propsFile);
+      sqlExecutor = new SQLExecutor(propsFile, feedback);
     } catch (InvalidPropertiesFileException e) {
       System.out.println("Invalid properties file: " + renderException(e));
-      e.printStackTrace();
+      // e.printStackTrace();
       return;
     } catch (CouldNotConnectToDatabaseException e) {
       System.out.println("Could not connect to database: " + renderException(e));
-      e.printStackTrace();
+      // e.printStackTrace();
       return;
     }
 
     try {
 
-      TestFeedback feedback = new TestFeedback();
-      s.build(currentVersion, scenario, sqlExecutor, feedback);
-//       s.clean(currentVersion, sqlExecutor, feedback );
-//      s.rebuild(currentVersion, scenario, sqlExecutor, feedback );
+      s.build(currentVersion, scenario, sqlExecutor);
+      // s.clean(currentVersion, sqlExecutor, feedback );
+      // s.rebuild(currentVersion, scenario, sqlExecutor, feedback );
 
     } catch (CouldNotReadSQLScriptException e) {
-//      System.out.println("Could not read SQL script file.");
-//      System.out.println(" -> " + renderException(e));
-//      e.printStackTrace();
+      // System.out.println("Could not read SQL script file.");
+      // System.out.println(" -> " + renderException(e));
+      // e.printStackTrace();
       return;
     } catch (SQLScriptAbortedException e) {
-//      System.out.println("SQL statement failed.");
-//      System.out.println(" -> " + renderException(e));
-//      e.printStackTrace();
+      // System.out.println("SQL statement failed.");
+      // System.out.println(" -> " + renderException(e));
+      // e.printStackTrace();
       return;
     }
-
   }
 
   private String renderException(final Throwable e) {

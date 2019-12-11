@@ -17,23 +17,32 @@ public class Source {
   private boolean buildOnErrorContinue;
   private boolean cleanOnErrorContinue;
 
+  private Feedback feedback;
+
   private TreeMap<VersionNumber, Layer> layers;
 
   public Source(final File sourceDir, final boolean layeredBuild, final boolean layeredScenarios,
-      final boolean buildOnErrorContinue, final boolean cleanOnErrorContinue) {
+      final boolean buildOnErrorContinue, final boolean cleanOnErrorContinue, final Feedback feedback)
+      throws InvalidDatabaseSourceException {
+
+    this.feedback = feedback;
 
     if (sourceDir == null) {
-      throw new IllegalArgumentException("sourcedir cannot be null");
+      feedback.error("Mandatory property (sourcedir) is not specified.");
+      throw new InvalidDatabaseSourceException("Mandatory property (sourcedir) is not specified");
     }
     if (!sourceDir.exists()) {
-      throw new IllegalArgumentException("sourcedir does not exist: " + sourceDir);
+      this.feedback.error("sourcedir does not exist: " + sourceDir);
+      throw new InvalidDatabaseSourceException("sourcedir does not exist: " + sourceDir);
     }
     if (!sourceDir.isDirectory()) {
-      throw new IllegalArgumentException("sourcedir is not a directory: " + sourceDir);
+      this.feedback.error("sourcedir is not a directory: " + sourceDir);
+      throw new InvalidDatabaseSourceException("sourcedir is not a directory: " + sourceDir);
     }
 
     if (!layeredBuild && layeredScenarios) {
-      throw new IllegalArgumentException("layered scenarios cannot be enabled when builds are not layered");
+      this.feedback.error("layered scenarios cannot be enabled when builds are not layered");
+      throw new InvalidDatabaseSourceException("layered scenarios cannot be enabled when builds are not layered");
     }
 
     this.sourceDir = sourceDir;
@@ -53,8 +62,8 @@ public class Source {
 
   }
 
-  public void build(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor,
-      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+  public void build(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
       throw new IllegalArgumentException(
@@ -64,20 +73,20 @@ public class Source {
     if (this.layeredBuild) {
       for (VersionNumber v : this.layers.keySet()) {
         if (!v.after(currentVersion)) {
-          buildLayer(this.layers.get(v), sqlExecutor, feedback);
+          buildLayer(this.layers.get(v), sqlExecutor);
           if (this.layeredScenarios || v.same(currentVersion)) {
-            buildScenario(this.layers.get(v), scenarioName, sqlExecutor, feedback);
+            buildScenario(this.layers.get(v), scenarioName, sqlExecutor);
           }
         }
       }
     } else {
-      buildLayer(l, sqlExecutor, feedback);
-      buildScenario(l, scenarioName, sqlExecutor, feedback);
+      buildLayer(l, sqlExecutor);
+      buildScenario(l, scenarioName, sqlExecutor);
     }
 
   }
 
-  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor, final Feedback feedback)
+  public void clean(final VersionNumber currentVersion, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(currentVersion);
     if (l == null) {
@@ -88,36 +97,36 @@ public class Source {
     if (this.layeredBuild) {
       for (VersionNumber v : this.layers.descendingKeySet()) {
         if (!v.after(currentVersion)) {
-          cleanLayer(this.layers.get(v), sqlExecutor, feedback);
+          cleanLayer(this.layers.get(v), sqlExecutor);
         }
       }
     } else {
-      cleanLayer(l, sqlExecutor, feedback);
+      cleanLayer(l, sqlExecutor);
     }
 
   }
 
-  public void rebuild(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor,
-      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    clean(currentVersion, sqlExecutor, feedback);
-    build(currentVersion, scenarioName, sqlExecutor, feedback);
+  public void rebuild(final VersionNumber currentVersion, final String scenarioName, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+    clean(currentVersion, sqlExecutor);
+    build(currentVersion, scenarioName, sqlExecutor);
   }
 
   // Delegate methods
 
-  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor, final Feedback feedback)
+  private void buildLayer(final Layer l, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.build(sqlExecutor, this.buildOnErrorContinue, feedback);
+    l.build(sqlExecutor, this.buildOnErrorContinue);
   }
 
-  private void buildScenario(final Layer l, final String scenarioName, final SQLExecutor sqlExecutor,
-      final Feedback feedback) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue, feedback);
+  private void buildScenario(final Layer l, final String scenarioName, final SQLExecutor sqlExecutor)
+      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+    l.buildScenario(scenarioName, sqlExecutor, this.buildOnErrorContinue);
   }
 
-  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor, final Feedback feedback)
+  private void cleanLayer(final Layer l, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    l.clean(sqlExecutor, this.cleanOnErrorContinue, feedback);
+    l.clean(sqlExecutor, this.cleanOnErrorContinue);
   }
 
   // toString()
@@ -129,6 +138,18 @@ public class Source {
       sb.append(" * layer '" + l.getVersionNumber() + "' - " + l + "\n");
     }
     return sb.toString();
+  }
+
+  // Classes
+
+  public static class InvalidDatabaseSourceException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
+    public InvalidDatabaseSourceException(final String message) {
+      super(message);
+    }
+
   }
 
 }

@@ -22,4 +22,42 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <build>
+
+    <plugins>
+
+      <!-- Configure the DB plugin -->
+
+      <plugin>
+        <groupId>org.nocrala.tools.database</groupId>
+        <artifactId>db-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+
+        <configuration>
+          <sourcedir>testdata/dbsrc</sourcedir>
+          <version>1.1.0</version>
+          <scenario>dev1</scenario>
+          <layeredbuild>true</layeredbuild>
+          <layeredscenarios>false</layeredscenarios>
+          <buildonerrorcontinue>false</buildonerrorcontinue>
+          <cleanonerrorcontinue>true</cleanonerrorcontinue>
+          <localproperties>localdatabase.properties</localproperties>
+        </configuration>
+
+        <dependencies>
+          <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5.jre6</version>
+            <type>jar</type>
+          </dependency>
+        </dependencies>
+
+      </plugin>
+      
+    </plugins>
+  
+  </build>
+  
 </project>

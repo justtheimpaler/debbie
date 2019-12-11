@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.nocrala.tools.database.db.executor.SQLScript.ScriptStatement;
+import org.nocrala.tools.database.db.utils.EUtil;
 
 public class SQLExecutor {
 
@@ -27,15 +28,21 @@ public class SQLExecutor {
   private Connection conn;
   private Statement stmt;
 
-  public SQLExecutor(final File localdatabaseproperties)
+  private Feedback feedback;
+
+  public SQLExecutor(final File localdatabaseproperties, final Feedback feedback)
       throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
+
+    this.feedback = feedback;
 
     Properties props = new Properties();
     try {
       props.load(new FileReader(localdatabaseproperties));
     } catch (FileNotFoundException e) {
+      this.feedback.error("Local properties file not found (" + localdatabaseproperties + "): " + e.getMessage());
       throw new InvalidPropertiesFileException("File not found: " + localdatabaseproperties, e);
     } catch (IOException e) {
+      this.feedback.error("Could not read local properties file (" + localdatabaseproperties + "): " + e.getMessage());
       throw new InvalidPropertiesFileException("Could not read file: " + localdatabaseproperties, e);
     }
 
@@ -45,13 +52,17 @@ public class SQLExecutor {
     this.jdbcPassword = props.getProperty(JDBC_PASSWORD_PROP);
 
     if (empty(this.jdbcDriverClass)) {
-      throw new InvalidPropertiesFileException("The property " + JDBC_DRIVER_CLASS_PROP
-          + " is not specified or empty in the properties file: " + localdatabaseproperties, null);
+      String msg = "Mandatory property (" + JDBC_DRIVER_CLASS_PROP + ") is not specified in the properties file: "
+          + localdatabaseproperties;
+      this.feedback.error(msg);
+      throw new InvalidPropertiesFileException(msg, null);
     }
 
     if (empty(this.jdbcURL)) {
-      throw new InvalidPropertiesFileException("The property " + JDBC_URL_PROP
-          + " is not specified or empty in the properties file: " + localdatabaseproperties, null);
+      String msg = "Mandatory property (" + JDBC_URL_PROP + ") is not specified in the properties file: "
+          + localdatabaseproperties;
+      this.feedback.error(msg);
+      throw new InvalidPropertiesFileException(msg, null);
     }
 
     this.conn = null;
@@ -60,6 +71,7 @@ public class SQLExecutor {
       connect();
       this.stmt = this.conn.createStatement();
     } catch (SQLException e) {
+      this.feedback.error("Could not connect to database: " + EUtil.renderException(e));
       throw new CouldNotConnectToDatabaseException("Could not connect to database", e);
     }
 
@@ -67,7 +79,7 @@ public class SQLExecutor {
 
   // typical delimiters: ; // go (separated line)
 
-  public void run(final File f, final boolean onErrorContinue, final Feedback feedback)
+  public void run(final File f, final boolean onErrorContinue)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
     ScriptStatement st = null;
@@ -80,19 +92,20 @@ public class SQLExecutor {
           stats.addFailed();
           String msg = "Failed to execute statement (" + f + ":" + st.getLine() + "):\n" + st.getSql() + "\n"
               + e.getMessage();
-          feedback.info(msg);
+          this.feedback.error(msg);
           if (onErrorContinue) {
-            feedback.info("-- continuing... ");
-            feedback.info("");
+            this.feedback.info("-- continuing... ");
+            this.feedback.info("");
           } else {
             stats.setFailedSQLStatement(st);
-            feedback.info(f + " -- " + stats.render());
+            this.feedback.info(f + " -- " + stats.render());
             throw new SQLScriptAbortedException(msg, e);
           }
         }
       }
-      feedback.info(f + " -- " + stats.render());
+      this.feedback.info(f + " -- " + stats.render());
     } catch (IOException e) {
+      this.feedback.error("Could not read SQL script (" + f + "): " + EUtil.renderException(e));
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
     }
   }

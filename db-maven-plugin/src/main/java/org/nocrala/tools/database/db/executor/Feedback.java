@@ -4,4 +4,6 @@ public interface Feedback {
 
   void info(String line);
 
+  void error(String line);
+
 }

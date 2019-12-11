@@ -16,10 +16,10 @@ import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
-@Mojo(name = "build", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
-public class BuildMojo extends AbstractMojo {
+@Mojo(name = "rebuild", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "rebuild"
+public class RebuildMojo extends AbstractMojo {
 
-  private static final String MOJO_ERROR_MESSAGE = "Database build failed";
+  private static final String MOJO_ERROR_MESSAGE = "Database rebuild failed";
 
   @Parameter()
   private String sourcedir;
@@ -49,8 +49,8 @@ public class BuildMojo extends AbstractMojo {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
-    feedback
-        .info("Build database from: " + this.sourcedir + " -- version: " + (this.version != null ? this.version : "n/a")
+    feedback.info(
+        "Rebuild database from: " + this.sourcedir + " -- version: " + (this.version != null ? this.version : "n/a")
             + " -- scenario: " + (this.scenario != null ? this.scenario : "no scenario"));
 
     if (this.version == null || this.version.trim().isEmpty()) {
@@ -81,7 +81,7 @@ public class BuildMojo extends AbstractMojo {
 
     try {
 
-      s.build(currentVersion, scenario, sqlExecutor);
+      s.rebuild(currentVersion, scenario, sqlExecutor);
 
     } catch (CouldNotReadSQLScriptException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
