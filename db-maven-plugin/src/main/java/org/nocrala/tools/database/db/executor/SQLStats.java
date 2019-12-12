@@ -1,6 +1,6 @@
 package org.nocrala.tools.database.db.executor;
 
-import org.nocrala.tools.database.db.executor.SQLScript.ScriptStatement;
+import org.nocrala.tools.database.db.executor.SQLScriptParser.ScriptStatement;
 
 public class SQLStats {
 

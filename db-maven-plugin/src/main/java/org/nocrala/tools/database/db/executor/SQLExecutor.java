@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.nocrala.tools.database.db.executor.SQLScript.ScriptStatement;
+import org.nocrala.tools.database.db.executor.SQLScriptParser.ScriptStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
 
 public class SQLExecutor {
@@ -83,8 +84,9 @@ public class SQLExecutor {
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
     ScriptStatement st = null;
-    try (SQLScript script = new SQLScript(f, ";")) {
-      while ((st = script.readStatement()) != null) {
+    try (Reader r = new FileReader(f)) {
+      SQLScriptParser sqlParser = new SQLScriptParser(r, ";");
+      while ((st = sqlParser.readStatement()) != null) {
         try {
           this.stmt.execute(st.getSql());
           stats.addSuccessful();

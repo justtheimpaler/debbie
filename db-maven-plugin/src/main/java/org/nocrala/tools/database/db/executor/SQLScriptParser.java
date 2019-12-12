@@ -1,12 +1,10 @@
 package org.nocrala.tools.database.db.executor;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
-public class SQLScript implements Closeable {
+public class SQLScriptParser {
 
   private BufferedReader r;
   private String delimiter;
@@ -20,9 +18,9 @@ public class SQLScript implements Closeable {
   private int pos;
   private StringBuilder sb;
 
-  public SQLScript(final File f, final String delimiter) throws IOException {
-//    System.out.println("-------------------- SQL SCRIPT");
-    this.r = new BufferedReader(new FileReader(f));
+  public SQLScriptParser(final Reader r, final String delimiter) throws IOException {
+    // System.out.println("-------------------- SQL SCRIPT");
+    this.r = new BufferedReader(r);
     this.sb = new StringBuilder();
     this.encloser = null;
     this.delimiter = delimiter;
@@ -32,7 +30,7 @@ public class SQLScript implements Closeable {
 
   private void nextLine() throws IOException {
     this.lineNumber++;
-//    System.out.println("-------------------- lineNumber=" + this.lineNumber);
+    // System.out.println("-------------------- lineNumber=" + this.lineNumber);
     this.line = this.r.readLine();
     this.pos = 0;
   }
@@ -47,7 +45,7 @@ public class SQLScript implements Closeable {
       readUntilNextDelimiter();
       sql = this.sb.toString().trim();
     } while (sql.isEmpty());
-    return new ScriptStatement(this.startLineNumber, this.startPos, sql);
+    return new ScriptStatement(this.startLineNumber, this.startPos + 1, sql);
   }
 
   private static final String SQ = "'";
@@ -56,6 +54,8 @@ public class SQLScript implements Closeable {
 
   private void readUntilNextDelimiter() throws IOException {
 
+    System.out.println(">>> this.pos="+this.pos);
+
     this.startLineNumber = null;
     this.startPos = this.pos;
 
@@ -63,13 +63,14 @@ public class SQLScript implements Closeable {
     while (!delimiterFound && this.line != null) {
 
       if (this.encloser == null) {
-//        System.out.println(">>> pos=" + this.pos + " '" + this.line + "'");
+        // System.out.println(">>> pos=" + this.pos + " '" + this.line + "'");
         int sq = this.line.indexOf(SQ, this.pos);
         int dq = this.line.indexOf(DQ, this.pos);
         int cm = this.line.indexOf(COMMENT, this.pos);
         int del = this.line.indexOf(this.delimiter, this.pos);
         int min = Utl.min(Utl.min(sq, dq), Utl.min(del, cm));
-//        System.out.println(">>> sq=" + sq + " dq=" + dq + " del=" + del + " cm=" + cm + " min=" + min);
+        // System.out.println(">>> sq=" + sq + " dq=" + dq + " del=" + del + " cm=" + cm
+        // + " min=" + min);
         if (min == -1) { // no special symbol until end of the line
           appendRestOfLine();
           nextLine();
@@ -105,13 +106,14 @@ public class SQLScript implements Closeable {
   }
 
   private void appendRestOfLine() {
-//    System.out.println("### [y] pos=" + this.pos);
+    // System.out.println("### [y] pos=" + this.pos);
     if (this.startLineNumber == null) {
       int nb = findFirstNonBlankChar(this.line, this.pos, this.line.length());
-//      System.out.println("### [1] nb=" + nb + " '" + this.line.substring(this.pos) + "'");
+      // System.out.println("### [1] nb=" + nb + " '" + this.line.substring(this.pos)
+      // + "'");
       if (nb != -1) {
         this.startLineNumber = this.lineNumber;
-//        System.out.println("### this.startLineNumber=" + this.startLineNumber);
+        // System.out.println("### this.startLineNumber=" + this.startLineNumber);
         this.startPos = nb;
       }
     }
@@ -120,13 +122,14 @@ public class SQLScript implements Closeable {
   }
 
   private void appendSegment(final int end) {
-//    System.out.println("### [x] pos=" + this.pos + " end=" + end);
+    // System.out.println("### [x] pos=" + this.pos + " end=" + end);
     if (this.startLineNumber == null) {
       int nb = findFirstNonBlankChar(this.line, this.pos, end);
-//      System.out.println("### [2] nb=" + nb + " '" + this.line.substring(this.pos) + "'");
+      // System.out.println("### [2] nb=" + nb + " '" + this.line.substring(this.pos)
+      // + "'");
       if (nb != -1) {
         this.startLineNumber = this.lineNumber;
-//        System.out.println("### this.startLineNumber=" + this.startLineNumber);
+        // System.out.println("### this.startLineNumber=" + this.startLineNumber);
         this.startPos = this.pos;
       }
     }
@@ -146,11 +149,6 @@ public class SQLScript implements Closeable {
       p++;
     }
     return -1;
-  }
-
-  @Override
-  public void close() throws IOException {
-    this.r.close();
   }
 
   // Classes
@@ -177,6 +175,10 @@ public class SQLScript implements Closeable {
 
     public String getSql() {
       return sql;
+    }
+
+    public String toString() {
+      return "line " + this.line + ", col " + this.col + ":" + this.sql;
     }
 
   }
