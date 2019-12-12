@@ -1,8 +1,9 @@
-package org.nocrala.tools.database.db.executor;
+package org.nocrala.tools.database.db.parser;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.nocrala.tools.database.db.parser.Utl;
 
 public class UtlTest {
 

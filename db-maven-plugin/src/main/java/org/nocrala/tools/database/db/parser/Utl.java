@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db.executor;
+package org.nocrala.tools.database.db.parser;
 
 class Utl {
 

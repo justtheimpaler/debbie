@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.nocrala.tools.database.db.executor.SQLScriptParser.ScriptStatement;
+import org.nocrala.tools.database.db.parser.SQLScriptParser;
+import org.nocrala.tools.database.db.parser.SQLScriptParser.ScriptStatement;
 
 public class SQLScriptParserTest {
 

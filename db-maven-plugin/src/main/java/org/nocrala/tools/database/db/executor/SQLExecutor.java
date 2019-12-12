@@ -11,7 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.nocrala.tools.database.db.executor.SQLScriptParser.ScriptStatement;
+import org.nocrala.tools.database.db.parser.SQLScriptParser;
+import org.nocrala.tools.database.db.parser.SQLScriptParser.ScriptStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
 
 public class SQLExecutor {
