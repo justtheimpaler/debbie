@@ -27,3 +27,8 @@ insert into x (id, a) values (12, Q'{Kenia's Best}');
 insert into x (id, a) values (13, Q'(Kenia's Best)');
 
 insert into x (id, a) values (14, Q':Kenia's Best:');
+
+insert into x (id, a) values (20, nq'_Kenia's Best_');
+insert into x (id, a) values (21, nQ'_Kenia's Best_');
+insert into x (id, a) values (22, Nq'_Kenia's Best_');
+insert into x (id, a) values (23, NQ'_Kenia's Best_');

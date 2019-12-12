@@ -21,6 +21,10 @@ insert into x (id, a) values (11, Q'[Kenia's Best]');
 insert into x (id, a) values (12, Q'{Kenia's Best}');
 insert into x (id, a) values (13, Q'(Kenia's Best)');
 insert into x (id, a) values (14, Q':Kenia's Best:'); -- any non-space char instead of :
+insert into x (id, a) values (20, nq'_Kenia's Best_');
+insert into x (id, a) values (21, nQ'_Kenia's Best_');
+insert into x (id, a) values (22, Nq'_Kenia's Best_');
+insert into x (id, a) values (23, NQ'_Kenia's Best_');
 -- ' -- line to help Eclipse's SQL editor
 
 -- DB2
@@ -39,7 +43,7 @@ create table x (
 insert into x (id, a) values (1, 'Kenia''s Best');
 insert into x (id, a) values (2, E'Kenia\'s Best');
 insert into x (id, a) values (3, $$Kenia's Best$$);
-insert into x (id, a) values (4, $token1$Kenia's Best$token1$);
+insert into x (id, a) values (4, $tag1$Kenia's Best$tag1$); -- the "tag" between $ follows the same rules as an unquoted identifier, except that it cannot contain a dollar sign
 -- ' -- line to help Eclipse's SQL editor
 
 -- SQL Server

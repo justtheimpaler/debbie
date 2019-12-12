@@ -1,17 +1,11 @@
-drop table if exists x//
+delete from x;
 
-create table x (
-  "A//" varchar(20)
-) //
+insert into x (id, a) values (1, 'Kenia''s Best');
 
-insert into x ("A//") values ('0
--- 1;
+insert into x (id, a) values (2, E'Kenia\'s Best');
 
-')
+insert into x (id, a) values (3, e'Kenia\'s Best');
 
-// 
+insert into x (id, a) values (4, $$Kenia's Best$$);
 
-insert into x ("A//") values ('2')//
-
-insert into x ("A//") values ('3') //   
-insert into x ("A//") values ('4;')
+insert into x (id, a) values (5, $tag1$Kenia's Best$tag1$); -- the "tag" between $ follows the same rules as an unquoted identifier, except that it cannot contain a dollar sign

@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.nocrala.tools.database.db.parser.SQLScriptParser;
-import org.nocrala.tools.database.db.parser.SQLScriptParser.ScriptStatement;
+import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
 
 public class SQLExecutor {
@@ -84,7 +84,7 @@ public class SQLExecutor {
   public void run(final File f, final boolean onErrorContinue)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
-    ScriptStatement st = null;
+    ScriptSQLStatement st = null;
     try (Reader r = new FileReader(f)) {
       SQLScriptParser sqlParser = new SQLScriptParser(r, ";");
       while ((st = sqlParser.readStatement()) != null) {
