@@ -4,19 +4,52 @@
 
   <groupId>org.nocrala.tools.database</groupId>
   <artifactId>db-maven-plugin</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>db-maven-plugin Maven Plugin</name>
 
-  <!-- FIXME change it to the project's website -->
-  <url>http://maven.apache.org</url>
+  <description>
+    This Maven plugin automates the build, rebuild, and clean operations on a project database based
+    on the SQL source code available in a strict, versioned structure in the the SCM.
+  </description>
+  
+  <url>https://sourceforge.net/projects/tartarus/</url>
+  
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>  
 
+  <developers>
+    <developer>
+      <id>valarcon</id>
+      <name>Vladimir Alarcon</name>
+      <email>vladimiralarcon@yahoo.com</email>
+      <organization>Empirical Inc.</organization>
+      <organizationUrl />
+      <roles>
+        <role>Programmer</role>
+      </roles>
+      <timezone>America/New York</timezone>
+    </developer>
+  </developers>
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <gpg.executable>gpg2</gpg.executable>
   </properties>
+
+  <scm>
+    <developerConnection>scm:git:ssh://git.code.sf.net/p/tartarus/dbm</developerConnection>
+    <url>https://sourceforge.net/p/tartarus/dbm/ci/master/tree/</url>
+    <tag>1.0.0</tag>
+  </scm>
 
   <dependencies>
 
@@ -69,6 +102,17 @@
 
   </dependencies>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
+
   <build>
     <plugins>
 
@@ -119,6 +163,69 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Produce sources package - For Maven Central publishing -->
+ 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+ 
+      <!-- Produce the Javadocs package - For Maven Central publishing -->
+ 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Sign components using GPG -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts-passphrase</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>      
+
+      <!-- Nexus Staging Maven Plugin for Deployment and Release -->
+
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>false</autoReleaseAfterClose> <!-- stage in Nexus, but do not release -->
+        </configuration>
       </plugin>
 
     </plugins>
