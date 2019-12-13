@@ -31,8 +31,9 @@ public class SQLExecutor {
   private Statement stmt;
 
   private Feedback feedback;
+  private Delimiter delimiter;
 
-  public SQLExecutor(final File localdatabaseproperties, final Feedback feedback)
+  public SQLExecutor(final File localdatabaseproperties, final Feedback feedback, final Delimiter delimiter)
       throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
 
     this.feedback = feedback;
@@ -86,7 +87,7 @@ public class SQLExecutor {
     SQLStats stats = new SQLStats();
     ScriptSQLStatement st = null;
     try (Reader r = new FileReader(f)) {
-      SQLScriptParser sqlParser = new SQLScriptParser(r, ";");
+      SQLScriptParser sqlParser = new SQLScriptParser(r, this.delimiter);
       while ((st = sqlParser.readStatement()) != null) {
         try {
           this.stmt.execute(st.getSql());

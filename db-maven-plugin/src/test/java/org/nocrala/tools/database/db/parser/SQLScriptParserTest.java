@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.nocrala.tools.database.db.executor.Delimiter;
 
 public class SQLScriptParserTest {
 
@@ -243,7 +244,8 @@ public class SQLScriptParserTest {
 
     List<ScriptSQLStatement> sts = new ArrayList<>();
     ScriptSQLStatement st = null;
-    SQLScriptParser sqlParser = new SQLScriptParser(r, ";");
+    Delimiter del = new Delimiter(";", false);
+    SQLScriptParser sqlParser = new SQLScriptParser(r, del);
     while ((st = sqlParser.readStatement()) != null) {
       sts.add(st);
     }

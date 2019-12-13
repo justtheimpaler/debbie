@@ -3,6 +3,7 @@ package org.nocrala.tools.database.db.source;
 import java.io.File;
 
 import org.junit.Test;
+import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -34,6 +35,8 @@ public class SourceTest {
 
     String localdatabaseproperties = "testdata/localdatabase.properties";
 
+    Delimiter del = new Delimiter(";", false);
+
     // Execution
 
     TestFeedback feedback = new TestFeedback();
@@ -54,7 +57,7 @@ public class SourceTest {
     SQLExecutor sqlExecutor = null;
 
     try {
-      sqlExecutor = new SQLExecutor(propsFile, feedback);
+      sqlExecutor = new SQLExecutor(propsFile, feedback, del);
     } catch (InvalidPropertiesFileException e) {
       System.out.println("Invalid properties file: " + renderException(e));
       // e.printStackTrace();

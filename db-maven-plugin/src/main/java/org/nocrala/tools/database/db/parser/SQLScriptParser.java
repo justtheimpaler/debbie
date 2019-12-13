@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.nocrala.tools.database.db.executor.Delimiter;
+
 public class SQLScriptParser {
 
   private BufferedReader r;
-  private String delimiter;
+  private Delimiter delimiter;
 
   private Integer startLineNumber;
   private int startPos;
@@ -18,8 +20,7 @@ public class SQLScriptParser {
   private int pos;
   private StringBuilder sb;
 
-  public SQLScriptParser(final Reader r, final String delimiter) throws IOException {
-    // System.out.println("-------------------- SQL SCRIPT");
+  public SQLScriptParser(final Reader r, final Delimiter delimiter) throws IOException {
     this.r = new BufferedReader(r);
     this.sb = new StringBuilder();
     this.quote = null;
@@ -66,7 +67,7 @@ public class SQLScriptParser {
         QuoteOpening qo = QuoteFinder.find(this.line, this.pos);
         // System.out.println(">>> qo=" + qo);
         int cm = this.line.indexOf(COMMENT, this.pos);
-        int del = this.line.indexOf(this.delimiter, this.pos);
+        int del = this.line.indexOf(this.delimiter.getToken(), this.pos);
         int min = Utl.min(qo == null ? -1 : qo.getPos(), Utl.min(del, cm));
         if (min == -1) { // no special symbol until end of the line
           appendRestOfLine();
@@ -82,7 +83,7 @@ public class SQLScriptParser {
           // System.out.println(">>> delimiter found at " + min);
           delimiterFound = true;
           appendSegment(min);
-          this.pos = min + this.delimiter.length();
+          this.pos = min + this.delimiter.getToken().length();
           return;
         }
       } else {
