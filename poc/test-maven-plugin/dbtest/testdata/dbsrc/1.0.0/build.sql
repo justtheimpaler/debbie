@@ -13,4 +13,18 @@ create table ship (
   constraint fk_ship_port foreign key (legal_location) references port(id) 
 );
 
+-- @delimiter // solo
+
+create function increment(i int) RETURNS INT AS $abc$
+BEGIN
+  RETURN i + 1;
+END;
+$abc$ LANGUAGE plpgsql;
+//
+
+-- @delimiter ;
+
+insert into port (id, name) values (increment(7), 'Conce');
+
+
 
