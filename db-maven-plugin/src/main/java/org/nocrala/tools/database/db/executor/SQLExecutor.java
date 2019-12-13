@@ -88,7 +88,7 @@ public class SQLExecutor {
     SQLStats stats = new SQLStats();
     ScriptSQLStatement st = null;
     try (Reader r = new FileReader(f)) {
-      SQLScriptParser sqlParser = new SQLScriptParser(r, this.delimiter);
+      SQLScriptParser sqlParser = new SQLScriptParser(r, this.delimiter, this.feedback);
       while ((st = sqlParser.readStatement()) != null) {
         try {
           this.stmt.execute(st.getSql());

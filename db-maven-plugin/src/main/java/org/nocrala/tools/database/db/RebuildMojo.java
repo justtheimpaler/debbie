@@ -57,6 +57,9 @@ public class RebuildMojo extends AbstractMojo {
   @Parameter()
   private String solodelimiter = null;
 
+  @Parameter()
+  private String casesensitivedelimiter = null;
+
   public void execute() throws MojoExecutionException {
 
     MojoFeedback feedback = new MojoFeedback(this);
@@ -65,13 +68,19 @@ public class RebuildMojo extends AbstractMojo {
         "Rebuild database from: " + this.sourcedir + " -- version: " + (this.version != null ? this.version : "n/a")
             + " -- scenario: " + (this.scenario != null ? this.scenario : "no scenario"));
 
+    // Version
+
     if (this.version == null || this.version.trim().isEmpty()) {
       feedback.error("Mandatory property (version) is not specified.");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
+    VersionNumber currentVersion = new VersionNumber(this.version);
+
+    // delimiter
+
     if (this.delimiter == null) {
-      this.delimiter = DEFAULT_DELIMITER;
+      this.delimiter = Constants.DEFAULT_DELIMITER;
     } else if (this.delimiter.trim().isEmpty()) {
       feedback.error("Specified property (delimiter) is empty.");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
@@ -79,7 +88,7 @@ public class RebuildMojo extends AbstractMojo {
 
     boolean solo;
     if (this.solodelimiter == null) {
-      solo = DEFAULT_SOLO_DELIMITER;
+      solo = Constants.DEFAULT_SOLO_DELIMITER;
     } else if ("true".equals(this.solodelimiter)) {
       solo = true;
     } else if ("false".equals(this.solodelimiter)) {
@@ -89,9 +98,19 @@ public class RebuildMojo extends AbstractMojo {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
-    Delimiter delimiter = new Delimiter(this.delimiter, solo);
+    boolean caseSensitive;
+    if (this.casesensitivedelimiter == null) {
+      caseSensitive = Constants.DEFAULT_CASE_SENSITIVE_SOLO_DELIMITER;
+    } else if ("true".equals(this.casesensitivedelimiter)) {
+      caseSensitive = true;
+    } else if ("false".equals(this.casesensitivedelimiter)) {
+      caseSensitive = false;
+    } else {
+      feedback.error("Specified property (casesensitivedelimiter) must have either the value true or false.");
+      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+    }
 
-    VersionNumber currentVersion = new VersionNumber(this.version);
+    Delimiter delimiter = new Delimiter(this.delimiter, caseSensitive, solo);
 
     Source s;
     try {

@@ -3,13 +3,22 @@ package org.nocrala.tools.database.db.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.nocrala.tools.database.db.executor.Delimiter;
+import org.nocrala.tools.database.db.executor.Feedback;
 
 public class SQLScriptParser {
 
+  private static final String COMMENT = "--";
+  private static final String DELIMITER_DIRECTIVE = "@delimiter";
+  private static final String DELIMITER_SOLO = "solo";
+  private static final String DELIMITER_INSENSITIVE = "insensitive";
+
   private BufferedReader r;
   private Delimiter delimiter;
+  private Feedback feedback;
 
   private Integer startLineNumber;
   private int startPos;
@@ -20,20 +29,66 @@ public class SQLScriptParser {
   private int pos;
   private StringBuilder sb;
 
-  public SQLScriptParser(final Reader r, final Delimiter delimiter) throws IOException {
+  // -- @delimiter ;
+  // -- @delimiter go solo insensitive
+  // -- @delimiter // solo
+
+  public SQLScriptParser(final Reader r, final Delimiter delimiter, final Feedback feedback) throws IOException {
     this.r = new BufferedReader(r);
     this.sb = new StringBuilder();
     this.quote = null;
     this.delimiter = delimiter;
+    this.feedback = feedback;
     this.lineNumber = 0;
     nextLine();
   }
 
   private void nextLine() throws IOException {
-    this.lineNumber++;
-    // System.out.println("-------------------- lineNumber=" + this.lineNumber);
-    this.line = this.r.readLine();
+    boolean directiveProcessed;
+    do {
+      directiveProcessed = false;
+      this.line = this.r.readLine();
+      this.lineNumber++;
+      if (this.line != null) {
+        Iterator<String> it = Arrays.stream(this.line.split("\\s+")).filter(s -> !s.trim().isEmpty()).iterator();
+        if (it.hasNext() && COMMENT.equals(it.next())) {
+          if (it.hasNext() && DELIMITER_DIRECTIVE.equals(it.next())) {
+            if (it.hasNext()) {
+              String token = it.next();
+              boolean solo = false;
+              boolean insensitive = false;
+              if (it.hasNext()) {
+                String p2 = it.next();
+                if (DELIMITER_SOLO.equals(p2)) {
+                  solo = true;
+                  if (it.hasNext()) {
+                    String p3 = it.next();
+                    if (DELIMITER_INSENSITIVE.equals(p3)) {
+                      insensitive = true;
+                    } else {
+                      directiveError("expected '" + DELIMITER_INSENSITIVE + "' but found '" + p3 + "'");
+                    }
+                  }
+                } else {
+                  directiveError("expected '" + DELIMITER_SOLO + "' but found '" + p2 + "'");
+                }
+              }
+              this.delimiter = new Delimiter(token, !insensitive, solo);
+              directiveProcessed = true;
+            } else {
+              directiveError("token not found");
+            }
+          }
+        }
+      }
+    } while (directiveProcessed);
     this.pos = 0;
+  }
+
+  private void directiveError(final String message) {
+    this.feedback
+        .error("Invalid delimiter directive at line " + this.lineNumber + ": " + message + " -- directive skipped.");
+    this.feedback.info("Delimiter directive line must take the form: -- @delimiter token [[solo] insensitive]");
   }
 
   public ScriptSQLStatement readStatement() throws IOException {
@@ -49,53 +104,68 @@ public class SQLScriptParser {
     return new ScriptSQLStatement(this.startLineNumber, this.startPos + 1, sql);
   }
 
-  private static final String COMMENT = "--";
-
   private void readUntilNextDelimiter() throws IOException {
 
-    // System.out.println(">>> --- readUntilNextDelimiter --- this.pos=" +
-    // this.pos);
+    if (this.delimiter.isSolo()) {
 
-    this.startLineNumber = null;
-    this.startPos = this.pos;
-    this.quote = null;
+      // Solo delimiter
 
-    boolean delimiterFound = false;
-    while (!delimiterFound && this.line != null) {
+      while (this.line != null
+          && !(this.delimiter.isCaseSensitiveSolo() && this.line.trim().equals(this.delimiter.getToken())
+              || this.line.trim().equalsIgnoreCase(this.delimiter.getToken()))) {
+        appendRestOfLine();
+        nextLine();
+      }
+      if (this.line != null) {
+        nextLine();
+      }
 
-      if (this.quote == null) {
-        QuoteOpening qo = QuoteFinder.find(this.line, this.pos);
-        // System.out.println(">>> qo=" + qo);
-        int cm = this.line.indexOf(COMMENT, this.pos);
-        int del = this.line.indexOf(this.delimiter.getToken(), this.pos);
-        int min = Utl.min(qo == null ? -1 : qo.getPos(), Utl.min(del, cm));
-        if (min == -1) { // no special symbol until end of the line
-          appendRestOfLine();
-          nextLine();
-        } else if (qo != null && min == qo.getPos()) { // quote found
-          appendSegment(min + qo.getParser().getOpening().length());
-          this.quote = qo;
-        } else if (min == cm) { // comment found
-          appendSegment(min);
-          this.sb.append("\n");
-          nextLine();
-        } else { // delimiter found at: del
-          // System.out.println(">>> delimiter found at " + min);
-          delimiterFound = true;
-          appendSegment(min);
-          this.pos = min + this.delimiter.getToken().length();
-          return;
+    } else {
+
+      // Inline delimiter
+
+      this.startLineNumber = null;
+      this.startPos = this.pos;
+      this.quote = null;
+
+      boolean delimiterFound = false;
+      while (!delimiterFound && this.line != null) {
+
+        if (this.quote == null) {
+          QuoteOpening qo = QuoteFinder.find(this.line, this.pos);
+          // System.out.println(">>> qo=" + qo);
+          int cm = this.line.indexOf(COMMENT, this.pos);
+          int del = this.line.indexOf(this.delimiter.getToken(), this.pos);
+          int min = Utl.min(qo == null ? -1 : qo.getPos(), Utl.min(del, cm));
+          if (min == -1) { // no special symbol until end of the line
+            appendRestOfLine();
+            nextLine();
+          } else if (qo != null && min == qo.getPos()) { // quote found
+            appendSegment(min + qo.getParser().getOpening().length());
+            this.quote = qo;
+          } else if (min == cm) { // comment found
+            appendSegment(min);
+            this.sb.append("\n");
+            nextLine();
+          } else { // delimiter found at: del
+            // System.out.println(">>> delimiter found at " + min);
+            delimiterFound = true;
+            appendSegment(min);
+            this.pos = min + this.delimiter.getToken().length();
+            return;
+          }
+        } else {
+          QuoteClosing c = this.quote.getParser().findClosing(this.line, this.pos);
+          if (c == null) { // no end of quote until end of the line
+            appendRestOfLine();
+            nextLine();
+          } else { // end of quote found
+            appendSegment(c.getPos() + c.getClosing().length());
+            this.pos = c.getPos() + c.getClosing().length();
+            this.quote = null;
+          }
         }
-      } else {
-        QuoteClosing c = this.quote.getParser().findClosing(this.line, this.pos);
-        if (c == null) { // no end of quote until end of the line
-          appendRestOfLine();
-          nextLine();
-        } else { // end of quote found
-          appendSegment(c.getPos() + c.getClosing().length());
-          this.pos = c.getPos() + c.getClosing().length();
-          this.quote = null;
-        }
+
       }
 
     }

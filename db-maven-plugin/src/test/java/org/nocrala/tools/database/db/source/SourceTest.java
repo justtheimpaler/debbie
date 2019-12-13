@@ -35,7 +35,7 @@ public class SourceTest {
 
     String localdatabaseproperties = "testdata/localdatabase.properties";
 
-    Delimiter del = new Delimiter(";", false);
+    Delimiter del = new Delimiter(";", false, false);
 
     // Execution
 
