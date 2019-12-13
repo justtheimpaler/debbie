@@ -34,7 +34,8 @@ public class SQLStats {
   }
 
   public String render() {
-    return "" + this.successful + " statement(s) successful" + (this.failed == 0 ? "" : ", " + this.failed + " failed");
+    return "" + this.successful + " statement" + (this.successful == 1 ? "" : "s") + " executed successfully"
+        + (this.failed == 0 ? "" : ", " + this.failed + " failed");
   }
 
 }

@@ -37,6 +37,7 @@ public class SQLExecutor {
       throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
 
     this.feedback = feedback;
+    this.delimiter = delimiter;
 
     Properties props = new Properties();
     try {
@@ -102,12 +103,12 @@ public class SQLExecutor {
             this.feedback.info("");
           } else {
             stats.setFailedSQLStatement(st);
-            this.feedback.info(f + " -- " + stats.render());
+            this.feedback.info("> " + f + " -- " + stats.render());
             throw new SQLScriptAbortedException(msg, e);
           }
         }
       }
-      this.feedback.info(f + " -- " + stats.render());
+      this.feedback.info("> " + f + " -- " + stats.render());
     } catch (IOException e) {
       this.feedback.error("Could not read SQL script (" + f + "): " + EUtil.renderException(e));
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
