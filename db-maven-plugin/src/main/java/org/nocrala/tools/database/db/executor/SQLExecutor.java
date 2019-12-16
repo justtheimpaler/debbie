@@ -8,7 +8,10 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.nocrala.tools.database.db.parser.SQLScriptParser;
@@ -16,6 +19,10 @@ import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
 
 public class SQLExecutor {
+
+  public static enum TreatWarningAs {
+    SUCCESS, WARNING, ERROR
+  }
 
   private static final String JDBC_DRIVER_CLASS_PROP = "jdbc.driverclass";
   private static final String JDBC_URL_PROP = "jdbc.url";
@@ -32,12 +39,14 @@ public class SQLExecutor {
 
   private Feedback feedback;
   private Delimiter delimiter;
+  private TreatWarningAs treatWarningAs;
 
-  public SQLExecutor(final File localdatabaseproperties, final Feedback feedback, final Delimiter delimiter)
-      throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
+  public SQLExecutor(final File localdatabaseproperties, final Feedback feedback, final Delimiter delimiter,
+      final TreatWarningAs treatWarningAs) throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
 
     this.feedback = feedback;
     this.delimiter = delimiter;
+    this.treatWarningAs = treatWarningAs;
 
     Properties props = new Properties();
     try {
@@ -92,20 +101,30 @@ public class SQLExecutor {
       while ((st = sqlParser.readStatement()) != null) {
         try {
           this.stmt.execute(st.getSql());
-          stats.addSuccessful();
-        } catch (SQLException e) {
-          stats.addFailed();
-          String msg = "Failed to execute statement (" + f.getPath() + ":" + st.getLine() + "):\n" + st.getSql() + "\n"
-              + e.getMessage();
-          this.feedback.error(msg);
-          if (onErrorContinue) {
-            this.feedback.info("-- continuing... ");
-            this.feedback.info("");
-          } else {
-            stats.setFailedSQLStatement(st);
-            this.feedback.info("> " + f.getPath() + " -- " + stats.render());
-            throw new SQLScriptAbortedException(msg, e);
+          SQLWarning w = this.stmt.getWarnings();
+          boolean error = false;
+          List<String> warningMessages = new ArrayList<>();
+          while (w != null) {
+            String msg = renderWarningMessage(w);
+            switch (this.treatWarningAs) {
+            case WARNING:
+              this.feedback.warn(msg);
+              break;
+            case ERROR:
+              error = true;
+              warningMessages.add(msg);
+              break;
+            default: // SUCCESS: ignore and hide
+            }
+            w = w.getNextWarning();
           }
+          if (error) {
+            handleError(f, onErrorContinue, stats, st, warningMessages, null);
+          } else {
+            stats.addSuccessful();
+          }
+        } catch (SQLException e) {
+          handleError(f, onErrorContinue, stats, st, null, e);
         }
       }
       this.feedback.info("> " + f.getPath() + " -- " + stats.render());
@@ -113,6 +132,58 @@ public class SQLExecutor {
       this.feedback.error("Could not read SQL script (" + f.getPath() + "): " + EUtil.renderException(e));
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
     }
+  }
+
+  private void handleError(final File f, final boolean onErrorContinue, final SQLStats stats,
+      final ScriptSQLStatement st, final List<String> warningMessages, final SQLException e)
+      throws SQLScriptAbortedException {
+    stats.addFailed();
+    String warnings = renderWarnings(warningMessages);
+    String msg = "Failed to execute statement (" + f.getPath() + ":" + st.getLine() + "):\n" + st.getSql()
+        + (e == null ? "" : "\n" + e.getMessage()) + (warnings == null ? "" : ("\n" + warnings));
+    this.feedback.error(msg);
+
+    if (onErrorContinue) {
+      this.feedback.info("-- continuing... ");
+      this.feedback.info("");
+    } else {
+      stats.setFailedSQLStatement(st);
+      this.feedback.info("> " + f.getPath() + " -- " + stats.render());
+      throw new SQLScriptAbortedException(msg, e);
+    }
+  }
+
+  private String renderWarnings(final List<String> warningMessages) {
+    if (warningMessages != null) {
+      StringBuilder sb = new StringBuilder();
+      boolean first = true;
+      for (String m : warningMessages) {
+        if (first) {
+          first = false;
+        } else {
+          sb.append("\n");
+        }
+        sb.append(m);
+      }
+      return sb.toString();
+    } else {
+      return null;
+    }
+  }
+
+  private String renderWarningMessage(SQLWarning w) {
+    StringBuilder sb = new StringBuilder("");
+    if (w.getMessage() != null) {
+      sb.append(w.getMessage() + ", ");
+    }
+    if (w.getSQLState() != null) {
+      sb.append("SQLState: " + w.getSQLState() + ", ");
+    }
+    sb.append("Error Code: " + w.getErrorCode());
+    if (w.getCause() != null) {
+      sb.append("\nException: " + EUtil.renderException(w.getCause()));
+    }
+    return sb.toString();
   }
 
   private void connect() throws SQLException {

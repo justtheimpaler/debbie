@@ -13,245 +13,243 @@ import org.nocrala.tools.database.db.executor.Feedback;
 
 public class SQLScriptParserTest {
 
-   @Test
-   public void testEmpty() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("");
-   assertEquals(0, t.length);
-   }
-  
-   @Test
-   public void testBlanks() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline(" ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline(" ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("\t");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline(" \n ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline(" \r ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline(" \n \n \n \n\n\n ");
-   assertEquals(0, t.length);
-   }
-  
-   @Test
-   public void testCommentsOnly() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("--");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("-- ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline(" --");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("\n--");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("\n-- ");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("\n --");
-   assertEquals(0, t.length);
-  
-   t = readStatementsInline("\n--\n --");
-   assertEquals(0, t.length);
-   }
-  
-   @Test
-   public void testOneStatement() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("select * from t");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("select * from t;");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline(";select * from t;");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline(" select * from t ");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("\nselect\n*\nfrom\nt\n");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline(";\n  select\n*\nfrom\nt\n;");
-   assertEquals(1, t.length);
-   assertEquals(2, t[0].getLine());
-   assertEquals(3, t[0].getCol());
-   }
-  
-   @Test
-   public void testTwoStatements() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("\n ; \ta ; \n --\n; b \t--;");
-  
-   assertEquals(2, t.length);
-  
-   assertEquals(2, t[0].getLine());
-   assertEquals(3, t[0].getCol());
-   assertEquals("a", t[0].getSql());
-  
-   assertEquals(4, t[1].getLine());
-   assertEquals(2, t[1].getCol());
-   assertEquals("b", t[1].getSql());
-   }
-  
-   @Test
-   public void testGeneralQuotes() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   // Simple
-  
-   t = readStatementsInline("a'b;'");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("''");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("'a''b'");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("a\"b;\"");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("\"\"");
-   assertEquals(1, t.length);
-   }
-  
-   @Test
-   public void testOracleQuotes() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("an'x;'b");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("an'x;'''b");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("aN'x;'b");
-   assertEquals(1, t.length);
-  
-   t = readStatementsInline("aN'x;'''b");
-   assertEquals(1, t.length);
-  
-   // Custom quotes
-  
-   tryOracleCombo("q", '_', '_');
-   tryOracleCombo("q", '<', '>');
-   tryOracleCombo("q", '[', ']');
-   tryOracleCombo("q", '{', '}');
-   tryOracleCombo("q", '(', ')');
-   tryOracleCombo("Q", '_', '_');
-   tryOracleCombo("Q", '<', '>');
-   tryOracleCombo("Q", '[', ']');
-   tryOracleCombo("Q", '{', '}');
-   tryOracleCombo("Q", '(', ')');
-  
-   tryOracleCombo("nq", '_', '_');
-   tryOracleCombo("nq", '<', '>');
-   tryOracleCombo("nq", '[', ']');
-   tryOracleCombo("nq", '{', '}');
-   tryOracleCombo("nq", '(', ')');
-   tryOracleCombo("nQ", '_', '_');
-   tryOracleCombo("nQ", '<', '>');
-   tryOracleCombo("nQ", '[', ']');
-   tryOracleCombo("nQ", '{', '}');
-   tryOracleCombo("nQ", '(', ')');
-  
-   tryOracleCombo("Nq", '_', '_');
-   tryOracleCombo("Nq", '<', '>');
-   tryOracleCombo("Nq", '[', ']');
-   tryOracleCombo("Nq", '{', '}');
-   tryOracleCombo("Nq", '(', ')');
-   tryOracleCombo("NQ", '_', '_');
-   tryOracleCombo("NQ", '<', '>');
-   tryOracleCombo("NQ", '[', ']');
-   tryOracleCombo("NQ", '{', '}');
-   tryOracleCombo("NQ", '(', ')');
-   }
-  
-   private void tryOracleCombo(final String prefix, final char open, final char
-   close) throws IOException {
-   ScriptSQLStatement[] t = readStatementsInline("a" + prefix + "'" + open +
-   "x;'c" + close + "'b;h");
-   assertEquals(2, t.length);
-   }
-  
-   @Test
-   public void testQuoteOpening() throws IOException {
-  
-   QuoteOpening a = new QuoteOpening(1, new QuoteParser("'", "'"));
-   QuoteOpening b = new QuoteOpening(2, new QuoteParser("'", "'"));
-  
-   assertEquals(null, QuoteOpening.first(null, null));
-   assertEquals(a, QuoteOpening.first(a, null));
-   assertEquals(a, QuoteOpening.first(null, a));
-   assertEquals(a, QuoteOpening.first(a, a));
-   assertEquals(a, QuoteOpening.first(a, b));
-   assertEquals(a, QuoteOpening.first(b, a));
-  
-   }
-  
-   @Test
-   public void testPostgreSQLQuotes() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("ae'x;\\'f'b;h");
-   assertEquals(2, t.length);
-  
-   t = readStatementsInline("aE'x;\\'f'b;h");
-   assertEquals(2, t.length);
-  
-   t = readStatementsInline("a$$x;'f$$b;h");
-   assertEquals(2, t.length);
-  
-   t = readStatementsInline("a$tag1$x;'f$tag1$b;h");
-   assertEquals(2, t.length);
-  
-   t = readStatementsInline("a$tag1$x;'f$tag2$b;h");
-   assertEquals(2, t.length);
-   }
-  
-   @Test
-   public void testMariaDBQuotes() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsInline("a'x;\\'f\\\\'b;h");
-   assertEquals(2, t.length);
-   }
-  
-   @Test
-   public void testSoloDelimiter() throws IOException {
-   ScriptSQLStatement[] t;
-  
-   t = readStatementsSolo("ago\nGo\nbgo");
-   assertEquals(2, t.length);
-  
-   t = readStatementsSolo("ago\n\nbgo");
-   assertEquals(1, t.length);
-  
-   t = readStatementsSolo("ago\n gO \ngob");
-   assertEquals(2, t.length);
-   assertEquals("ago", t[0].getSql());
-   assertEquals("gob", t[1].getSql());
-  
-   }
+  @Test
+  public void testEmpty() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("");
+    assertEquals(0, t.length);
+  }
+
+  @Test
+  public void testBlanks() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline(" ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline(" ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("\t");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline(" \n ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline(" \r ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline(" \n \n \n \n\n\n ");
+    assertEquals(0, t.length);
+  }
+
+  @Test
+  public void testCommentsOnly() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("--");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("-- ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline(" --");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("\n--");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("\n-- ");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("\n --");
+    assertEquals(0, t.length);
+
+    t = readStatementsInline("\n--\n --");
+    assertEquals(0, t.length);
+  }
+
+  @Test
+  public void testOneStatement() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("select * from t");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("select * from t;");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline(";select * from t;");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline(" select * from t ");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("\nselect\n*\nfrom\nt\n");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline(";\n  select\n*\nfrom\nt\n;");
+    assertEquals(1, t.length);
+    assertEquals(2, t[0].getLine());
+    assertEquals(3, t[0].getCol());
+  }
+
+  @Test
+  public void testTwoStatements() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("\n ; \ta ; \n --\n; b \t--;");
+
+    assertEquals(2, t.length);
+
+    assertEquals(2, t[0].getLine());
+    assertEquals(3, t[0].getCol());
+    assertEquals("a", t[0].getSql());
+
+    assertEquals(4, t[1].getLine());
+    assertEquals(2, t[1].getCol());
+    assertEquals("b", t[1].getSql());
+  }
+
+  @Test
+  public void testGeneralQuotes() throws IOException {
+    ScriptSQLStatement[] t;
+
+    // Simple
+
+    t = readStatementsInline("a'b;'");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("''");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("'a''b'");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("a\"b;\"");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("\"\"");
+    assertEquals(1, t.length);
+  }
+
+  @Test
+  public void testOracleQuotes() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("an'x;'b");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("an'x;'''b");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("aN'x;'b");
+    assertEquals(1, t.length);
+
+    t = readStatementsInline("aN'x;'''b");
+    assertEquals(1, t.length);
+
+    // Custom quotes
+
+    tryOracleCombo("q", '_', '_');
+    tryOracleCombo("q", '<', '>');
+    tryOracleCombo("q", '[', ']');
+    tryOracleCombo("q", '{', '}');
+    tryOracleCombo("q", '(', ')');
+    tryOracleCombo("Q", '_', '_');
+    tryOracleCombo("Q", '<', '>');
+    tryOracleCombo("Q", '[', ']');
+    tryOracleCombo("Q", '{', '}');
+    tryOracleCombo("Q", '(', ')');
+
+    tryOracleCombo("nq", '_', '_');
+    tryOracleCombo("nq", '<', '>');
+    tryOracleCombo("nq", '[', ']');
+    tryOracleCombo("nq", '{', '}');
+    tryOracleCombo("nq", '(', ')');
+    tryOracleCombo("nQ", '_', '_');
+    tryOracleCombo("nQ", '<', '>');
+    tryOracleCombo("nQ", '[', ']');
+    tryOracleCombo("nQ", '{', '}');
+    tryOracleCombo("nQ", '(', ')');
+
+    tryOracleCombo("Nq", '_', '_');
+    tryOracleCombo("Nq", '<', '>');
+    tryOracleCombo("Nq", '[', ']');
+    tryOracleCombo("Nq", '{', '}');
+    tryOracleCombo("Nq", '(', ')');
+    tryOracleCombo("NQ", '_', '_');
+    tryOracleCombo("NQ", '<', '>');
+    tryOracleCombo("NQ", '[', ']');
+    tryOracleCombo("NQ", '{', '}');
+    tryOracleCombo("NQ", '(', ')');
+  }
+
+  private void tryOracleCombo(final String prefix, final char open, final char close) throws IOException {
+    ScriptSQLStatement[] t = readStatementsInline("a" + prefix + "'" + open + "x;'c" + close + "'b;h");
+    assertEquals(2, t.length);
+  }
+
+  @Test
+  public void testQuoteOpening() throws IOException {
+
+    QuoteOpening a = new QuoteOpening(1, new QuoteParser("'", "'"));
+    QuoteOpening b = new QuoteOpening(2, new QuoteParser("'", "'"));
+
+    assertEquals(null, QuoteOpening.first(null, null));
+    assertEquals(a, QuoteOpening.first(a, null));
+    assertEquals(a, QuoteOpening.first(null, a));
+    assertEquals(a, QuoteOpening.first(a, a));
+    assertEquals(a, QuoteOpening.first(a, b));
+    assertEquals(a, QuoteOpening.first(b, a));
+
+  }
+
+  @Test
+  public void testPostgreSQLQuotes() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("ae'x;\\'f'b;h");
+    assertEquals(2, t.length);
+
+    t = readStatementsInline("aE'x;\\'f'b;h");
+    assertEquals(2, t.length);
+
+    t = readStatementsInline("a$$x;'f$$b;h");
+    assertEquals(2, t.length);
+
+    t = readStatementsInline("a$tag1$x;'f$tag1$b;h");
+    assertEquals(2, t.length);
+
+    t = readStatementsInline("a$tag1$x;'f$tag2$b;h");
+    assertEquals(2, t.length);
+  }
+
+  @Test
+  public void testMariaDBQuotes() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsInline("a'x;\\'f\\\\'b;h");
+    assertEquals(2, t.length);
+  }
+
+  @Test
+  public void testSoloDelimiter() throws IOException {
+    ScriptSQLStatement[] t;
+
+    t = readStatementsSolo("ago\nGo\nbgo");
+    assertEquals(2, t.length);
+
+    t = readStatementsSolo("ago\n\nbgo");
+    assertEquals(1, t.length);
+
+    t = readStatementsSolo("ago\n gO \ngob");
+    assertEquals(2, t.length);
+    assertEquals("ago", t[0].getSql());
+    assertEquals("gob", t[1].getSql());
+
+  }
 
   @Test
   public void testDirective() throws IOException {
@@ -305,12 +303,17 @@ public class SQLScriptParserTest {
   public static class TestFeedback implements Feedback {
 
     @Override
-    public void info(String line) {
+    public void info(final String line) {
       System.out.println("[INFO] " + line);
     }
 
     @Override
-    public void error(String line) {
+    public void warn(final String line) {
+      System.out.println("[WARN] " + line);
+    }
+
+    @Override
+    public void error(final String line) {
       System.out.println("[ERROR] " + line);
     }
 

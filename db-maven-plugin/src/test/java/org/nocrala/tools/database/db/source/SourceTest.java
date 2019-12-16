@@ -9,6 +9,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatab
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
+import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
@@ -57,7 +58,7 @@ public class SourceTest {
     SQLExecutor sqlExecutor = null;
 
     try {
-      sqlExecutor = new SQLExecutor(propsFile, feedback, del);
+      sqlExecutor = new SQLExecutor(propsFile, feedback, del, TreatWarningAs.ERROR);
     } catch (InvalidPropertiesFileException e) {
       System.out.println("Invalid properties file: " + renderException(e));
       // e.printStackTrace();

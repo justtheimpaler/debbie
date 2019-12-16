@@ -17,7 +17,12 @@ public class MojoFeedback implements Feedback {
   }
 
   @Override
-  public void error(String line) {
+  public void warn(final String line) {
+    this.mojo.getLog().warn(line);
+  }
+
+  @Override
+  public void error(final String line) {
     this.mojo.getLog().error(line);
   }
 

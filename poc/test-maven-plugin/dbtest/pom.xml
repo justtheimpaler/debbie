@@ -12,6 +12,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -22,42 +24,69 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
-  <build>
 
-    <plugins>
+  <profiles>
 
-      <!-- Configure the DB plugin -->
+    <!-- Default test -->
 
-      <plugin>
-        <groupId>org.nocrala.tools.database</groupId>
-        <artifactId>db-maven-plugin</artifactId>
-        <version>1.0.0</version>
+    <profile>
+      <id>main</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.2</version>
+            <configuration>
+              <sourcedir>testdata/dbsrc</sourcedir>
+              <version>1.1.0</version>
+              <scenario>dev1</scenario>
+              <layeredbuild>true</layeredbuild>
+              <layeredscenarios>false</layeredscenarios>
+              <buildonerrorcontinue>false</buildonerrorcontinue>
+              <cleanonerrorcontinue>true</cleanonerrorcontinue>
+              <localproperties>localdatabase.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.2.5.jre6</version>
+                <type>jar</type>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
-        <configuration>
-          <sourcedir>testdata/dbsrc</sourcedir>
-          <version>1.1.0</version>
-          <scenario>dev1</scenario>
-          <layeredbuild>true</layeredbuild>
-          <layeredscenarios>false</layeredscenarios>
-          <buildonerrorcontinue>false</buildonerrorcontinue>
-          <cleanonerrorcontinue>true</cleanonerrorcontinue>
-          <localproperties>localdatabase.properties</localproperties>
-        </configuration>
+    <!-- Oracle profile -->
 
-        <dependencies>
-          <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.2.5.jre6</version>
-            <type>jar</type>
-          </dependency>
-        </dependencies>
+    <profile>
+      <id>oracle</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.2</version>
+            <configuration>
+              <sourcedir>stored-procedures/oracle</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/oracle/localdatabase.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.oracle.ojdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>19.3.0.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
-      </plugin>
-      
-    </plugins>
-  
-  </build>
-  
+  </profiles>
+
 </project>

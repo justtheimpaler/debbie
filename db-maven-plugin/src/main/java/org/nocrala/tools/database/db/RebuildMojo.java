@@ -14,6 +14,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatab
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
+import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
@@ -57,6 +58,9 @@ public class RebuildMojo extends AbstractMojo {
 
   @Parameter()
   private String casesensitivedelimiter = null;
+
+  @Parameter()
+  private String treatwarningas = null;
 
   // Project information
 
@@ -113,6 +117,20 @@ public class RebuildMojo extends AbstractMojo {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
+    TreatWarningAs treatWarningAs;
+    if (this.treatwarningas == null) {
+      treatWarningAs = Constants.DEFAULT_TREAT_WARNING_AS;
+    } else if ("success".equalsIgnoreCase(this.treatwarningas)) {
+      treatWarningAs = TreatWarningAs.SUCCESS;
+    } else if ("warn".equalsIgnoreCase(this.treatwarningas)) {
+      treatWarningAs = TreatWarningAs.WARNING;
+    } else if ("error".equalsIgnoreCase(this.treatwarningas)) {
+      treatWarningAs = TreatWarningAs.ERROR;
+    } else {
+      feedback.error("Specified property (treatwarningas) must have any value from the list: success, warn, error");
+      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+    }
+
     Delimiter delimiter = new Delimiter(this.delimiter, caseSensitive, solo);
 
     Source s;
@@ -127,7 +145,7 @@ public class RebuildMojo extends AbstractMojo {
     SQLExecutor sqlExecutor;
     try {
       File propsFile = new File(this.project.getBasedir(), this.localproperties);
-      sqlExecutor = new SQLExecutor(propsFile, feedback, delimiter);
+      sqlExecutor = new SQLExecutor(propsFile, feedback, delimiter, treatWarningAs);
     } catch (InvalidPropertiesFileException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (CouldNotConnectToDatabaseException e) {
