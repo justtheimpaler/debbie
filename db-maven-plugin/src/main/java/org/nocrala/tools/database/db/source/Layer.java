@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
@@ -21,8 +22,11 @@ public class Layer {
   private File scenariosDir;
   private Map<String, Scenario> scenarios;
 
-  public Layer(final VersionNumber versionNumber, final File dir) {
+  private Feedback feedback;
+
+  public Layer(final VersionNumber versionNumber, final File dir, final Feedback feedback) {
     this.versionNumber = versionNumber;
+    this.feedback = feedback;
     this.build = new File(dir, BUILD_FILE);
     this.clean = new File(dir, CLEAN_FILE);
 
@@ -44,7 +48,7 @@ public class Layer {
     if (this.build.exists() && this.build.isFile()) {
       sqlExecutor.run(this.build, onErrorContinue);
     } else {
-      System.out.println("" + this.build + ": not found -- skipped");
+      this.feedback.info("" + this.build + ": not found -- skipped");
     }
   }
 
@@ -55,7 +59,7 @@ public class Layer {
     if (this.clean.exists() && this.clean.isFile()) {
       sqlExecutor.run(this.clean, onErrorContinue);
     } else {
-      System.out.println("" + this.clean + ": not found -- skipped");
+      this.feedback.info("" + this.clean + ": not found -- skipped");
     }
   }
 
@@ -63,11 +67,13 @@ public class Layer {
 
   public void buildScenario(final String name, final SQLExecutor sqlExecutor, final boolean onErrorContinue)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    Scenario s = this.scenarios.get(name);
-    if (s != null) {
-      s.build(sqlExecutor, onErrorContinue);
-    } else {
-      System.out.println("" + new File(this.scenariosDir, name) + ": not found -- skipped");
+    if (name != null) {
+      Scenario s = this.scenarios.get(name);
+      if (s != null) {
+        s.build(sqlExecutor, onErrorContinue, feedback);
+      } else {
+        this.feedback.info("" + new File(this.scenariosDir, name) + ": not found -- skipped");
+      }
     }
   }
 

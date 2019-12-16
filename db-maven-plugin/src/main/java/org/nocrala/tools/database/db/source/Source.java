@@ -56,7 +56,7 @@ public class Source {
     this.layers = new TreeMap<>();
     for (File f : dirs) {
       VersionNumber v = new VersionNumber(f.getName());
-      Layer l = new Layer(v, f);
+      Layer l = new Layer(v, f, this.feedback);
       this.layers.put(v, l);
     }
 
