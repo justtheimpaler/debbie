@@ -300,7 +300,6 @@ public class SQLScriptParserTest {
     for (ScriptSQLStatement s : t) {
       System.out.println(" - " + s);
     }
-
   }
 
   public static class TestFeedback implements Feedback {

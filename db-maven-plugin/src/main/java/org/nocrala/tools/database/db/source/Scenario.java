@@ -2,7 +2,6 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
-import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;

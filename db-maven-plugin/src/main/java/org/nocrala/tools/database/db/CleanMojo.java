@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
@@ -21,9 +22,6 @@ import org.nocrala.tools.database.db.utils.VersionNumber;
 public class CleanMojo extends AbstractMojo {
 
   private static final String MOJO_ERROR_MESSAGE = "Database clean failed";
-
-  private static final String DEFAULT_DELIMITER = ";";
-  private static final boolean DEFAULT_SOLO_DELIMITER = false;
 
   // Parameters
 
@@ -59,6 +57,11 @@ public class CleanMojo extends AbstractMojo {
 
   @Parameter()
   private String casesensitivedelimiter = null;
+
+  // Project information
+
+  @Parameter(defaultValue = "${project}", required = true, readonly = true)
+  private MavenProject project;
 
   public void execute() throws MojoExecutionException {
 
@@ -114,7 +117,7 @@ public class CleanMojo extends AbstractMojo {
 
     Source s;
     try {
-      File dbdir = new File(this.sourcedir);
+      File dbdir = new File(this.project.getBasedir(), this.sourcedir);
       s = new Source(dbdir, this.layeredbuild, this.layeredscenarios, this.buildonerrorcontinue,
           this.cleanonerrorcontinue, feedback);
     } catch (InvalidDatabaseSourceException e) {
@@ -123,7 +126,7 @@ public class CleanMojo extends AbstractMojo {
 
     SQLExecutor sqlExecutor;
     try {
-      File propsFile = new File(this.localproperties);
+      File propsFile = new File(this.project.getBasedir(), this.localproperties);
       sqlExecutor = new SQLExecutor(propsFile, feedback, delimiter);
     } catch (InvalidPropertiesFileException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
