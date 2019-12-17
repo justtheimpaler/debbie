@@ -87,7 +87,7 @@ public class SQLScriptParser {
 
   private void directiveError(final String message) {
     this.feedback
-        .info("Invalid delimiter directive at line " + this.lineNumber + ": " + message + " -- directive skipped.");
+        .warn("Invalid delimiter directive at line " + this.lineNumber + ": " + message + " -- directive skipped.");
     this.feedback.info("Delimiter directive line must take the form: -- @delimiter token [[solo] insensitive]");
   }
 

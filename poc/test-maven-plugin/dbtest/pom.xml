@@ -74,6 +74,7 @@
               <sourcedir>stored-procedures/oracle</sourcedir>
               <version>1.0.0</version>
               <localproperties>stored-procedures/oracle/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
             </configuration>
             <dependencies>
               <dependency>

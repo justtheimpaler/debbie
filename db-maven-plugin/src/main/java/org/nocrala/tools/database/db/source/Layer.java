@@ -48,7 +48,7 @@ public class Layer {
     if (this.build.exists() && this.build.isFile()) {
       sqlExecutor.run(this.build, onErrorContinue);
     } else {
-      this.feedback.info("" + this.build + ": not found -- skipped");
+      this.feedback.warn("" + this.build + ": not found -- skipped");
     }
   }
 
@@ -59,7 +59,7 @@ public class Layer {
     if (this.clean.exists() && this.clean.isFile()) {
       sqlExecutor.run(this.clean, onErrorContinue);
     } else {
-      this.feedback.info("" + this.clean + ": not found -- skipped");
+      this.feedback.warn("" + this.clean + ": not found -- skipped");
     }
   }
 
@@ -72,7 +72,7 @@ public class Layer {
       if (s != null) {
         s.build(sqlExecutor, onErrorContinue, feedback);
       } else {
-        this.feedback.info("" + new File(this.scenariosDir, name) + ": not found -- skipped");
+        this.feedback.warn("" + new File(this.scenariosDir, name) + ": not found -- skipped");
       }
     }
   }

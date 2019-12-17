@@ -24,7 +24,7 @@ public class Scenario {
     if (this.buildData.exists() && this.buildData.isFile()) {
       sqlExecutor.run(this.buildData, onErrorContinue);
     } else {
-      feedback.info("-- " + this.buildData + " does not exist -- skipped");
+      feedback.warn("-- " + this.buildData + " does not exist -- skipped");
     }
   }
 

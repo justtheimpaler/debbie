@@ -4,7 +4,7 @@
 
   <groupId>org.nocrala.tools.database</groupId>
   <artifactId>db-maven-plugin</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <packaging>maven-plugin</packaging>
 
   <name>db-maven-plugin Maven Plugin</name>
