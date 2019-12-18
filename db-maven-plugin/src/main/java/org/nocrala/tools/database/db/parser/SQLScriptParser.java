@@ -106,6 +106,10 @@ public class SQLScriptParser {
 
   private void readUntilNextDelimiter() throws IOException {
 
+    this.startLineNumber = null;
+    this.startPos = this.pos;
+    this.quote = null;
+
     if (this.delimiter.isSolo()) {
 
       // Solo delimiter
@@ -124,16 +128,11 @@ public class SQLScriptParser {
 
       // Inline delimiter
 
-      this.startLineNumber = null;
-      this.startPos = this.pos;
-      this.quote = null;
-
       boolean delimiterFound = false;
       while (!delimiterFound && this.line != null) {
 
         if (this.quote == null) {
           QuoteOpening qo = QuoteFinder.find(this.line, this.pos);
-          // System.out.println(">>> qo=" + qo);
           int cm = this.line.indexOf(COMMENT, this.pos);
           int del = this.line.indexOf(this.delimiter.getToken(), this.pos);
           int min = Utl.min(qo == null ? -1 : qo.getPos(), Utl.min(del, cm));
@@ -148,7 +147,6 @@ public class SQLScriptParser {
             this.sb.append("\n");
             nextLine();
           } else { // delimiter found at: del
-            // System.out.println(">>> delimiter found at " + min);
             delimiterFound = true;
             appendSegment(min);
             this.pos = min + this.delimiter.getToken().length();
@@ -173,14 +171,10 @@ public class SQLScriptParser {
   }
 
   private void appendRestOfLine() {
-    // System.out.println("### [y] pos=" + this.pos);
     if (this.startLineNumber == null) {
       int nb = findFirstNonBlankChar(this.line, this.pos, this.line.length());
-      // System.out.println("### [1] nb=" + nb + " '" + this.line.substring(this.pos)
-      // + "'");
       if (nb != -1) {
         this.startLineNumber = this.lineNumber;
-        // System.out.println("### this.startLineNumber=" + this.startLineNumber);
         this.startPos = nb;
       }
     }
@@ -189,14 +183,10 @@ public class SQLScriptParser {
   }
 
   private void appendSegment(final int end) {
-    // System.out.println("### [x] pos=" + this.pos + " end=" + end);
     if (this.startLineNumber == null) {
       int nb = findFirstNonBlankChar(this.line, this.pos, end);
-      // System.out.println("### [2] nb=" + nb + " '" + this.line.substring(this.pos)
-      // + "'");
       if (nb != -1) {
         this.startLineNumber = this.lineNumber;
-        // System.out.println("### this.startLineNumber=" + this.startLineNumber);
         this.startPos = this.pos;
       }
     }
