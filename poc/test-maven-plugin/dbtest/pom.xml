@@ -88,6 +88,147 @@
       </build>
     </profile>
 
+    <!-- DB2 profile -->
+
+    <profile>
+      <id>db2</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.3</version>
+            <configuration>
+              <sourcedir>stored-procedures/db2</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/db2/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.ibm.db2</groupId>
+                <artifactId>jcc</artifactId>
+                <version>11.5.0.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- PostgreSQL profile -->
+
+    <profile>
+      <id>postgresql</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.3</version>
+            <configuration>
+              <sourcedir>stored-procedures/postgresql</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/postgresql/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.2.9</version>
+                <type>jar</type>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- SQL Server profile -->
+
+    <profile>
+      <id>sqlserver</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.3</version>
+            <configuration>
+              <sourcedir>stored-procedures/sqlserver</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/sqlserver/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>7.4.1.jre8</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- MariaDB profile -->
+
+    <profile>
+      <id>mariadb</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.3</version>
+            <configuration>
+              <sourcedir>stored-procedures/mariadb</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/mariadb/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>2.5.2</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- MySQL profile -->
+
+    <profile>
+      <id>mysql</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database</groupId>
+            <artifactId>db-maven-plugin</artifactId>
+            <version>1.0.3</version>
+            <configuration>
+              <sourcedir>stored-procedures/mysql</sourcedir>
+              <version>1.0.0</version>
+              <localproperties>stored-procedures/mysql/localdatabase.properties</localproperties>
+              <treatwarningas>warn</treatwarningas>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.18</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 
 </project>
