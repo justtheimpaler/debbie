@@ -8,4 +8,8 @@ public interface Feedback {
 
   void error(String line);
 
+  default void logSQLWarning(final String m) {
+    
+  }
+  
 }

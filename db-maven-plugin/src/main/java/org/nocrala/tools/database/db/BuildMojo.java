@@ -89,7 +89,7 @@ public class BuildMojo extends AbstractMojo {
     if (this.delimiter == null) {
       this.delimiter = Constants.DEFAULT_DELIMITER;
     } else if (this.delimiter.trim().isEmpty()) {
-      feedback.error("Specified property (delimiter) is empty.");
+      feedback.error("Invalid value for property (delimiter); must specify a non empty value.");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
@@ -101,7 +101,8 @@ public class BuildMojo extends AbstractMojo {
     } else if ("false".equals(this.solodelimiter)) {
       solo = false;
     } else {
-      feedback.error("Specified property (solodelimiter) must have either the value true or false.");
+      feedback.error("Invalid value '" + this.solodelimiter
+          + "' for property (solodelimiter) must have either the value true or false.");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
@@ -113,30 +114,34 @@ public class BuildMojo extends AbstractMojo {
     } else if ("false".equals(this.casesensitivedelimiter)) {
       caseSensitive = false;
     } else {
-      feedback.error("Specified property (casesensitivedelimiter) must have either the value true or false.");
+      feedback.error("Invalid value '" + this.casesensitivedelimiter
+          + "' for property (casesensitivedelimiter); must have either the value true or false.");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
     TreatWarningAs treatWarningAs;
     if (this.treatwarningas == null) {
       treatWarningAs = Constants.DEFAULT_TREAT_WARNING_AS;
-    } else if ("success".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.SUCCESS;
+    } else if ("ignore".equalsIgnoreCase(this.treatwarningas)) {
+      treatWarningAs = TreatWarningAs.IGNORE;
+    } else if ("info".equalsIgnoreCase(this.treatwarningas)) {
+      treatWarningAs = TreatWarningAs.INFO;
     } else if ("warn".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.WARNING;
+      treatWarningAs = TreatWarningAs.WARN;
     } else if ("error".equalsIgnoreCase(this.treatwarningas)) {
       treatWarningAs = TreatWarningAs.ERROR;
     } else {
-      feedback.error("Specified property (treatwarningas) must have any value from the list: success, warn, error");
+      feedback.error("Invalid value '" + this.treatwarningas
+          + "' for property (treatwarningas); must have one of the following values: ignore, info, warn, error");
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
     Delimiter delimiter = new Delimiter(this.delimiter, caseSensitive, solo);
 
-    Source s;
+    Source source;
     try {
       File dbdir = new File(this.project.getBasedir(), this.sourcedir);
-      s = new Source(dbdir, this.layeredbuild, this.layeredscenarios, this.buildonerrorcontinue,
+      source = new Source(dbdir, this.layeredbuild, this.layeredscenarios, this.buildonerrorcontinue,
           this.cleanonerrorcontinue, feedback);
     } catch (InvalidDatabaseSourceException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
@@ -153,7 +158,7 @@ public class BuildMojo extends AbstractMojo {
     }
 
     try {
-      s.build(currentVersion, this.scenario, sqlExecutor);
+      source.build(currentVersion, this.scenario, sqlExecutor);
     } catch (CouldNotReadSQLScriptException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {

@@ -10,18 +10,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.nocrala.tools.database.db.parser.SQLScriptParser;
 import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
+import org.nocrala.tools.database.db.utils.StreamUtil;
 
 public class SQLExecutor {
 
   public static enum TreatWarningAs {
-    SUCCESS, WARNING, ERROR
+    IGNORE, INFO, WARN, ERROR
   }
 
   private static final String JDBC_DRIVER_CLASS_PROP = "jdbc.driverclass";
@@ -102,27 +103,30 @@ public class SQLExecutor {
         try {
           this.stmt.execute(st.getSql());
           SQLWarning w = this.stmt.getWarnings();
-          boolean error = false;
-          List<String> warningMessages = new ArrayList<>();
-          while (w != null) {
-            String msg = renderWarningMessage(w);
+          if (w != null) {
+            String warnings = StreamUtil.asStream(new SQLWarningIterator(w)) //
+                .map(x -> renderSQLWarning(x)) //
+                .collect(Collectors.joining("\n"));
             switch (this.treatWarningAs) {
-            case WARNING:
-              this.feedback.warn(msg);
+            case INFO:
+              stats.addSuccessful();
+              this.feedback.info(warnings);
+              break;
+            case WARN:
+              stats.addSuccessful();
+              this.feedback.warn("Statement produced SQL warnings (" + f.getPath() + ":" + st.getLine() + "):\n"
+                  + st.getSql() + "\n" + warnings);
               break;
             case ERROR:
-              error = true;
-              warningMessages.add(msg);
+              handleError(f, onErrorContinue, stats, st, warnings, null);
               break;
-            default: // SUCCESS: ignore and hide
+            default: // Ignore
+              stats.addSuccessful();
             }
-            w = w.getNextWarning();
-          }
-          if (error) {
-            handleError(f, onErrorContinue, stats, st, warningMessages, null);
           } else {
             stats.addSuccessful();
           }
+
         } catch (SQLException e) {
           handleError(f, onErrorContinue, stats, st, null, e);
         }
@@ -135,10 +139,8 @@ public class SQLExecutor {
   }
 
   private void handleError(final File f, final boolean onErrorContinue, final SQLStats stats,
-      final ScriptSQLStatement st, final List<String> warningMessages, final SQLException e)
-      throws SQLScriptAbortedException {
+      final ScriptSQLStatement st, final String warnings, final SQLException e) throws SQLScriptAbortedException {
     stats.addFailed();
-    String warnings = renderWarnings(warningMessages);
     String msg = "Failed to execute statement (" + f.getPath() + ":" + st.getLine() + "):\n" + st.getSql()
         + (e == null ? "" : "\n" + e.getMessage()) + (warnings == null ? "" : ("\n" + warnings));
     this.feedback.error(msg);
@@ -153,25 +155,7 @@ public class SQLExecutor {
     }
   }
 
-  private String renderWarnings(final List<String> warningMessages) {
-    if (warningMessages != null) {
-      StringBuilder sb = new StringBuilder();
-      boolean first = true;
-      for (String m : warningMessages) {
-        if (first) {
-          first = false;
-        } else {
-          sb.append("\n");
-        }
-        sb.append(m);
-      }
-      return sb.toString();
-    } else {
-      return null;
-    }
-  }
-
-  private String renderWarningMessage(SQLWarning w) {
+  private String renderSQLWarning(final SQLWarning w) {
     StringBuilder sb = new StringBuilder("");
     if (w.getMessage() != null) {
       sb.append(w.getMessage() + ", ");
@@ -209,6 +193,30 @@ public class SQLExecutor {
 
   private boolean empty(final String s) {
     return s == null || s.trim().isEmpty();
+  }
+
+  // Iterator
+
+  public static class SQLWarningIterator implements Iterator<SQLWarning> {
+
+    private SQLWarning warning;
+
+    public SQLWarningIterator(final SQLWarning warning) {
+      this.warning = warning;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return this.warning != null;
+    }
+
+    @Override
+    public SQLWarning next() {
+      SQLWarning w = this.warning;
+      this.warning = this.warning.getNextWarning();
+      return w;
+    }
+
   }
 
   // Exceptions
