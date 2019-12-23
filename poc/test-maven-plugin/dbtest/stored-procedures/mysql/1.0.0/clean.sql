@@ -2,7 +2,6 @@
 
 drop procedure plustwo;
 
--- Functions?
-
+drop function f2x;
 
 

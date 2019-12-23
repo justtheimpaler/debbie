@@ -8,6 +8,11 @@ begin
 end;
 //
 
--- Functions are available since 10.3.3
+create function f2x (dept tinytext) 
+returns int
+begin
+return 1;
+end;
+//
 
 

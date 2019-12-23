@@ -8,7 +8,12 @@ begin
 end;
 //
 
--- Functions?
+create function f2x (dept tinytext) 
+returns int
+begin
+return 1;
+end;
+//
 
 
 
