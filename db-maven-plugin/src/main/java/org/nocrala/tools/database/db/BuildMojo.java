@@ -1,23 +1,18 @@
 package org.nocrala.tools.database.db;
 
-import java.io.File;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
-import org.nocrala.tools.database.db.utils.VersionNumber;
 
 @Mojo(name = "build", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
 public class BuildMojo extends AbstractMojo {
@@ -27,25 +22,25 @@ public class BuildMojo extends AbstractMojo {
   // Parameters
 
   @Parameter()
-  private String sourcedir;
+  private String sourcedir = null;
 
   @Parameter()
-  private String version;
+  private String targetversion = null;
 
   @Parameter()
-  protected String scenario;
+  private String datascenario = null;
 
   @Parameter()
-  private boolean layeredbuild = true;
+  private String layeredbuild = null;
 
   @Parameter()
-  private boolean layeredscenarios = false;
+  private String layeredscenarios = null;
 
   @Parameter()
-  private boolean buildonerrorcontinue = false;
+  private String onbuilderror = null;
 
   @Parameter()
-  private boolean cleanonerrorcontinue = true;
+  private String oncleanerror = null;
 
   @Parameter()
   private String localproperties = null;
@@ -71,86 +66,25 @@ public class BuildMojo extends AbstractMojo {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
-    feedback
-        .info("Build database from: " + this.sourcedir + " -- version: " + (this.version != null ? this.version : "n/a")
-            + " -- scenario: " + (this.scenario != null ? this.scenario : "no scenario"));
+    feedback.info("Build database from: " + this.sourcedir + " -- version: "
+        + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
+        + (this.datascenario != null ? this.datascenario : "no scenario"));
 
-    // Version
-
-    if (this.version == null || this.version.trim().isEmpty()) {
-      feedback.error("Mandatory property (version) is not specified.");
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
-    }
-
-    VersionNumber currentVersion = new VersionNumber(this.version);
-
-    // delimiter
-
-    if (this.delimiter == null) {
-      this.delimiter = Constants.DEFAULT_DELIMITER;
-    } else if (this.delimiter.trim().isEmpty()) {
-      feedback.error("Invalid value for property (delimiter); must specify a non empty value.");
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
-    }
-
-    boolean solo;
-    if (this.solodelimiter == null) {
-      solo = Constants.DEFAULT_SOLO_DELIMITER;
-    } else if ("true".equals(this.solodelimiter)) {
-      solo = true;
-    } else if ("false".equals(this.solodelimiter)) {
-      solo = false;
-    } else {
-      feedback.error("Invalid value '" + this.solodelimiter
-          + "' for property (solodelimiter) must have either the value true or false.");
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
-    }
-
-    boolean caseSensitive;
-    if (this.casesensitivedelimiter == null) {
-      caseSensitive = Constants.DEFAULT_CASE_SENSITIVE_SOLO_DELIMITER;
-    } else if ("true".equals(this.casesensitivedelimiter)) {
-      caseSensitive = true;
-    } else if ("false".equals(this.casesensitivedelimiter)) {
-      caseSensitive = false;
-    } else {
-      feedback.error("Invalid value '" + this.casesensitivedelimiter
-          + "' for property (casesensitivedelimiter); must have either the value true or false.");
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
-    }
-
-    TreatWarningAs treatWarningAs;
-    if (this.treatwarningas == null) {
-      treatWarningAs = Constants.DEFAULT_TREAT_WARNING_AS;
-    } else if ("ignore".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.IGNORE;
-    } else if ("info".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.INFO;
-    } else if ("warn".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.WARN;
-    } else if ("error".equalsIgnoreCase(this.treatwarningas)) {
-      treatWarningAs = TreatWarningAs.ERROR;
-    } else {
-      feedback.error("Invalid value '" + this.treatwarningas
-          + "' for property (treatwarningas); must have one of the following values: ignore, info, warn, error");
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
-    }
-
-    Delimiter delimiter = new Delimiter(this.delimiter, caseSensitive, solo);
+    ConfigurationProperties config = new ConfigurationProperties(this.project, this.sourcedir, this.targetversion,
+        this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
+        this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
+        feedback, MOJO_ERROR_MESSAGE);
 
     Source source;
     try {
-      File dbdir = new File(this.project.getBasedir(), this.sourcedir);
-      source = new Source(dbdir, this.layeredbuild, this.layeredscenarios, this.buildonerrorcontinue,
-          this.cleanonerrorcontinue, feedback);
+      source = new Source(this.project, config, feedback);
     } catch (InvalidDatabaseSourceException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
     SQLExecutor sqlExecutor;
     try {
-      File propsFile = new File(this.project.getBasedir(), this.localproperties);
-      sqlExecutor = new SQLExecutor(propsFile, feedback, delimiter, treatWarningAs);
+      sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (CouldNotConnectToDatabaseException e) {
@@ -158,12 +92,13 @@ public class BuildMojo extends AbstractMojo {
     }
 
     try {
-      source.build(currentVersion, this.scenario, sqlExecutor);
+      source.build(config.getTargetVersion(), sqlExecutor);
     } catch (CouldNotReadSQLScriptException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
+
   }
 
 }

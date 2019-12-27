@@ -2,6 +2,7 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
+import org.nocrala.tools.database.db.ConfigurationProperties;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -13,25 +14,29 @@ public class Scenario {
 
   private File buildData;
 
-  public Scenario(final File dir) {
+  private ConfigurationProperties config;
+  private Feedback feedback;
+
+  public Scenario(final File dir, final ConfigurationProperties config, final Feedback feedback) {
     this.buildData = new File(dir, BUILD_DATA_FILE);
+    this.config = config;
+    this.feedback = feedback;
   }
 
   // Build
 
-  public void build(final SQLExecutor sqlExecutor, final boolean onErrorContinue, final Feedback feedback)
-      throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
+  public void build(final SQLExecutor sqlExecutor) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.buildData.exists() && this.buildData.isFile()) {
-      sqlExecutor.run(this.buildData, onErrorContinue);
+      sqlExecutor.run(this.buildData, this.config.getOnBuildError());
     } else {
-      feedback.warn("-- " + this.buildData + " does not exist -- skipped");
+      this.feedback.warn("-- " + this.buildData + " does not exist -- skipped");
     }
   }
 
   // Getters
 
   public File getBuildData() {
-    return buildData;
+    return this.buildData;
   }
 
 }

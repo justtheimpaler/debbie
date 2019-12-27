@@ -2,14 +2,15 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
+import org.apache.maven.project.MavenProject;
 import org.junit.Test;
+import org.nocrala.tools.database.db.ConfigurationProperties;
 import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 import org.nocrala.tools.database.db.utils.VersionNumber;
 
@@ -48,7 +49,9 @@ public class SourceTest {
 
     Source s;
     try {
-      s = new Source(dbdir, layeredBuild, layeredScenarios, buildOnErrorContinue, cleanOnErrorContinue, feedback);
+      MavenProject project = null;
+      ConfigurationProperties config = null;
+      s = new Source(project, config, feedback);
     } catch (InvalidDatabaseSourceException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -58,7 +61,8 @@ public class SourceTest {
     SQLExecutor sqlExecutor = null;
 
     try {
-      sqlExecutor = new SQLExecutor(propsFile, feedback, del, TreatWarningAs.ERROR);
+      ConfigurationProperties config = null;
+      sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
       System.out.println("Invalid properties file: " + renderException(e));
       // e.printStackTrace();
@@ -71,7 +75,7 @@ public class SourceTest {
 
     try {
 
-      s.build(currentVersion, scenario, sqlExecutor);
+      s.build(currentVersion, sqlExecutor);
       // s.clean(currentVersion, sqlExecutor, feedback );
       // s.rebuild(currentVersion, scenario, sqlExecutor, feedback );
 
