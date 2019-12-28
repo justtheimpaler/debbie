@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db;
+package org.nocrala.tools.database.db.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -6,6 +6,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.nocrala.tools.database.db.ConfigurationProperties;
+import org.nocrala.tools.database.db.ConfigurationProperties.ConfigurationException;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -70,14 +72,19 @@ public class CleanMojo extends AbstractMojo {
         + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
         + (this.datascenario != null ? this.datascenario : "no scenario"));
 
-    ConfigurationProperties config = new ConfigurationProperties(this.project, this.sourcedir, this.targetversion,
-        this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
-        this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
-        feedback, MOJO_ERROR_MESSAGE);
+    ConfigurationProperties config;
+    try {
+      config = new ConfigurationProperties(this.project.getBasedir(), this.sourcedir, this.targetversion,
+          this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
+          this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
+          feedback);
+    } catch (ConfigurationException e1) {
+      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+    }
 
     Source source;
     try {
-      source = new Source(this.project, config, feedback);
+      source = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }

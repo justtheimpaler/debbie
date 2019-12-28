@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db;
+package org.nocrala.tools.database.db.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -6,6 +6,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.nocrala.tools.database.db.ConfigurationProperties;
+import org.nocrala.tools.database.db.ConfigurationProperties.ConfigurationException;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -14,10 +16,10 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedExcept
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 
-@Mojo(name = "rebuild", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
-public class RebuildMojo extends AbstractMojo {
+@Mojo(name = "build", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
+public class BuildMojo extends AbstractMojo {
 
-  private static final String MOJO_ERROR_MESSAGE = "Database rebuild failed";
+  private static final String MOJO_ERROR_MESSAGE = "Database build failed";
 
   // Parameters
 
@@ -66,18 +68,23 @@ public class RebuildMojo extends AbstractMojo {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
-    feedback.info("Rebuild database from: " + this.sourcedir + " -- version: "
+    feedback.info("Build database from: " + this.sourcedir + " -- version: "
         + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
         + (this.datascenario != null ? this.datascenario : "no scenario"));
 
-    ConfigurationProperties config = new ConfigurationProperties(this.project, this.sourcedir, this.targetversion,
-        this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
-        this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
-        feedback, MOJO_ERROR_MESSAGE);
+    ConfigurationProperties config;
+    try {
+      config = new ConfigurationProperties(this.project.getBasedir(), this.sourcedir, this.targetversion,
+          this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
+          this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
+          feedback);
+    } catch (ConfigurationException e1) {
+      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+    }
 
     Source source;
     try {
-      source = new Source(this.project, config, feedback);
+      source = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
@@ -92,7 +99,7 @@ public class RebuildMojo extends AbstractMojo {
     }
 
     try {
-      source.rebuild(config.getTargetVersion(), sqlExecutor);
+      source.build(config.getTargetVersion(), sqlExecutor);
     } catch (CouldNotReadSQLScriptException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {

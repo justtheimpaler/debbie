@@ -49,9 +49,8 @@ public class SourceTest {
 
     Source s;
     try {
-      MavenProject project = null;
       ConfigurationProperties config = null;
-      s = new Source(project, config, feedback);
+      s = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

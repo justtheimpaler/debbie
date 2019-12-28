@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db;
+package org.nocrala.tools.database.db.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.nocrala.tools.database.db.executor.Feedback;

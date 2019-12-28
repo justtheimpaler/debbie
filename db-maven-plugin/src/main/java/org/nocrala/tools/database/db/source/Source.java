@@ -18,7 +18,7 @@ public class Source {
 
   private TreeMap<VersionNumber, Layer> layers;
 
-  public Source(final MavenProject project, final ConfigurationProperties config, final Feedback feedback)
+  public Source(final ConfigurationProperties config, final Feedback feedback)
       throws InvalidDatabaseSourceException {
 
     this.config = config;

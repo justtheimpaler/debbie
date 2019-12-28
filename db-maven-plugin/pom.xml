@@ -106,6 +106,15 @@
       <type>jar</type>
       <scope>test</scope>
     </dependency>
+    
+    <!-- Apache Ant 10 dependency for Ant tasks -->
+
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.10.7</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 

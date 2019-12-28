@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
@@ -50,39 +48,39 @@ public class ConfigurationProperties {
   private String jdbcUsername;
   private String jdbcPassword;
 
-  public ConfigurationProperties(final MavenProject project, final String sourcedir, final String targetversion,
+  public ConfigurationProperties(final File basedir, final String sourcedir, final String targetversion,
       final String datascenario, final String layeredbuild, final String layeredscenario, final String onbuilderror,
       final String oncleanerror, final String delimitersequence, final String solodelimiter,
       final String casesensitivedelimiter, final String treatwarningas, final String localproperties,
-      final Feedback feedback, final String mojoErrorMessage) throws MojoExecutionException {
+      final Feedback feedback) throws ConfigurationException {
 
     // Database source dir
 
     if (sourcedir == null) {
       feedback.error("Mandatory property (sourcedir) is not specified.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
     if (sourcedir.trim().isEmpty()) {
       feedback.error("Mandatory property (sourcedir) is empty.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
-    this.databaseSourceDir = new File(project.getBasedir(), sourcedir);
+    this.databaseSourceDir = new File(basedir, sourcedir);
 
     if (!this.databaseSourceDir.exists()) {
       feedback.error("sourcedir does not exist: " + this.databaseSourceDir);
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
     if (!this.databaseSourceDir.isDirectory()) {
       feedback.error("sourcedir is not a directory: " + this.databaseSourceDir);
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     // Target version
 
     if (targetversion == null || targetversion.trim().isEmpty()) {
       feedback.error("Mandatory property (version) is not specified.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     this.targetVersion = new VersionNumber(targetversion);
@@ -105,7 +103,7 @@ public class ConfigurationProperties {
         break;
       default:
         feedback.error("Invalid value for property (layeredbuild): " + "must have either the value true or false.");
-        throw new MojoExecutionException(mojoErrorMessage);
+        throw new ConfigurationException();
       }
     }
 
@@ -121,13 +119,13 @@ public class ConfigurationProperties {
         break;
       default:
         feedback.error("Invalid value for property (layeredscenario): " + "must have either the value true or false.");
-        throw new MojoExecutionException(mojoErrorMessage);
+        throw new ConfigurationException();
       }
     }
 
     if (!this.layeredBuild && this.layeredScenario) {
       feedback.error("layered scenarios cannot be enabled when builds are not layered");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     // Error handling
@@ -144,7 +142,7 @@ public class ConfigurationProperties {
         break;
       default:
         feedback.error("Invalid value for property (onbuilderror): " + "must have the value stop or continue.");
-        throw new MojoExecutionException(mojoErrorMessage);
+        throw new ConfigurationException();
       }
     }
 
@@ -160,7 +158,7 @@ public class ConfigurationProperties {
         break;
       default:
         feedback.error("Invalid value for property (oncleanerror): " + "must have the value stop or continue.");
-        throw new MojoExecutionException(mojoErrorMessage);
+        throw new ConfigurationException();
       }
     }
 
@@ -171,7 +169,7 @@ public class ConfigurationProperties {
       dsequence = Constants.DEFAULT_DELIMITER;
     } else if (delimitersequence.trim().isEmpty()) {
       feedback.error("Invalid value for property (delimiter): must specify a non empty value.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     } else {
       dsequence = delimitersequence;
     }
@@ -186,7 +184,7 @@ public class ConfigurationProperties {
     } else {
       feedback.error("Invalid value '" + solodelimiter
           + "' for property (solodelimiter): must have either the value true or false.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     boolean caseSensitive;
@@ -199,7 +197,7 @@ public class ConfigurationProperties {
     } else {
       feedback.error("Invalid value '" + casesensitivedelimiter
           + "' for property (casesensitivedelimiter): must have either the value true or false.");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     this.delimiter = new Delimiter(dsequence, caseSensitive, solo);
@@ -219,7 +217,7 @@ public class ConfigurationProperties {
     } else {
       feedback.error("Invalid value '" + treatwarningas
           + "' for property (treatwarningas): must have one of the following values: ignore, info, warn, error");
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     // JDBC Properties
@@ -229,10 +227,10 @@ public class ConfigurationProperties {
       props.load(new FileReader(localproperties));
     } catch (FileNotFoundException e) {
       feedback.error("Local properties file not found (" + localproperties + "): " + e.getMessage());
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     } catch (IOException e) {
       feedback.error("Could not read local properties file (" + localproperties + "): " + e.getMessage());
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     this.jdbcDriverClass = props.getProperty(JDBC_DRIVER_CLASS_PROP);
@@ -243,13 +241,13 @@ public class ConfigurationProperties {
     if (empty(this.jdbcDriverClass)) {
       feedback.error("Mandatory property (" + JDBC_DRIVER_CLASS_PROP + ") is not specified in the properties file: "
           + localproperties);
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
     if (empty(this.jdbcURL)) {
       feedback.error(
           "Mandatory property (" + JDBC_URL_PROP + ") is not specified in the properties file: " + localproperties);
-      throw new MojoExecutionException(mojoErrorMessage);
+      throw new ConfigurationException();
     }
 
   }
@@ -310,6 +308,14 @@ public class ConfigurationProperties {
 
   public String getJdbcPassword() {
     return jdbcPassword;
+  }
+
+  // Exception handling
+
+  public static class ConfigurationException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
   }
 
 }
