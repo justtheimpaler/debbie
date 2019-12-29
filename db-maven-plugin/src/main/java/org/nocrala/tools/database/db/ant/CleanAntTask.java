@@ -35,9 +35,9 @@ public class CleanAntTask extends Task {
 
   public void execute() {
 
-    AntFeedback feedback = new AntFeedback();
+    AntFeedback feedback = new AntFeedback(this);
 
-    feedback.info("Build database from: " + this.sourcedir + " -- version: "
+    feedback.info("Clean database from: " + this.sourcedir + " -- version: "
         + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
         + (this.datascenario != null ? this.datascenario : "no scenario"));
 

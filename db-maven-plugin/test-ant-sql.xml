@@ -17,4 +17,70 @@
     </sql>
   </target>
 
+  <target name="db-build">
+    <taskdef name="database-build"
+             classname="org.nocrala.tools.database.db.ant.BuildAntTask">
+      <classpath>
+        <pathelement location="target/db-maven-plugin-1.0.4-SNAPSHOT.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-build sourcedir="testdata/dbsrc"
+                    targetversion="1.1.0"
+                    datascenario="dev1"
+                    layeredbuild="true"
+                    layeredscenarios="false"
+                    onbuilderror="stop"
+                    oncleanerror="continue"
+                    localproperties="testdata/localdatabase.properties"
+                    delimiter=";"
+                    solodelimiter="false"
+                    casesensitivedelimiter="false"
+                    treatwarningas="error" />
+  </target>
+
+  <target name="db-clean">
+    <taskdef name="database-clean"
+             classname="org.nocrala.tools.database.db.ant.CleanAntTask">
+      <classpath>
+        <pathelement location="target/db-maven-plugin-1.0.4-SNAPSHOT.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-clean sourcedir="testdata/dbsrc"
+                    targetversion="1.1.0"
+                    datascenario="dev1"
+                    layeredbuild="true"
+                    layeredscenarios="false"
+                    onbuilderror="stop"
+                    oncleanerror="continue"
+                    localproperties="testdata/localdatabase.properties"
+                    delimiter=";"
+                    solodelimiter="false"
+                    casesensitivedelimiter="false"
+                    treatwarningas="error" />
+  </target>
+
+  <target name="db-rebuild">
+    <taskdef name="database-rebuild"
+             classname="org.nocrala.tools.database.db.ant.RebuildAntTask">
+      <classpath>
+        <pathelement location="target/db-maven-plugin-1.0.4-SNAPSHOT.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-rebuild sourcedir="testdata/dbsrc"
+                      targetversion="1.1.0"
+                      datascenario="dev1"
+                      layeredbuild="true"
+                      layeredscenarios="false"
+                      onbuilderror="stop"
+                      oncleanerror="continue"
+                      localproperties="testdata/localdatabase.properties"
+                      delimiter=";"
+                      solodelimiter="false"
+                      casesensitivedelimiter="false"
+                      treatwarningas="error" />
+  </target>
+
 </project>

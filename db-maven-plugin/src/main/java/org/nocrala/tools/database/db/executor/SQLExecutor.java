@@ -25,10 +25,10 @@ public class SQLExecutor {
     IGNORE, INFO, WARN, ERROR
   }
 
-  private String jdbcDriverClass;
-  private String jdbcURL;
-  private String jdbcUsername;
-  private String jdbcPassword;
+//  private String jdbcDrivxerClass;
+//  private String jdbcURL;
+//  private String jdbcUsername;
+//  private String jdbcPassword;
 
   private Connection conn;
   private Statement stmt;
@@ -135,11 +135,13 @@ public class SQLExecutor {
 
   private void connect() throws SQLException {
     try {
-      Class.forName(this.jdbcDriverClass);
+      System.out.println("this.config.getJdbcDriverClass()=" + this.config.getJdbcDriverClass());
+      Class.forName(this.config.getJdbcDriverClass());
     } catch (ClassNotFoundException e) {
-      throw new SQLException("JDBC driver class not found: " + this.jdbcDriverClass);
+      throw new SQLException("JDBC driver class not found: " + this.config.getJdbcDriverClass());
     }
-    this.conn = DriverManager.getConnection(this.jdbcURL, this.jdbcUsername, this.jdbcPassword);
+    this.conn = DriverManager.getConnection(this.config.getJdbcURL(), this.config.getJdbcUsername(),
+        this.config.getJdbcPassword());
   }
 
   public static class JDBCInitializationException extends Exception {

@@ -35,7 +35,7 @@ public class BuildAntTask extends Task {
 
   public void execute() {
 
-    AntFeedback feedback = new AntFeedback();
+    AntFeedback feedback = new AntFeedback(this);
 
     feedback.info("Build database from: " + this.sourcedir + " -- version: "
         + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
