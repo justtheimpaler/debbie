@@ -135,7 +135,6 @@ public class SQLExecutor {
 
   private void connect() throws SQLException {
     try {
-      System.out.println("this.config.getJdbcDriverClass()=" + this.config.getJdbcDriverClass());
       Class.forName(this.config.getJdbcDriverClass());
     } catch (ClassNotFoundException e) {
       throw new SQLException("JDBC driver class not found: " + this.config.getJdbcDriverClass());

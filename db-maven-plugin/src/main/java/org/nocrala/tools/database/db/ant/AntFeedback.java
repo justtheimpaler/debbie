@@ -15,19 +15,16 @@ public class AntFeedback implements Feedback {
   @Override
   public void info(final String line) {
     this.task.log(line, Project.MSG_INFO);
-//    t.System.out.println(line);
   }
 
   @Override
   public void warn(final String line) {
-    this.task.log(line, Project.MSG_WARN);
-//    System.out.println("[WARN] " + line);
+    this.task.log("Warning: " + line, Project.MSG_WARN);
   }
 
   @Override
   public void error(final String line) {
-    this.task.log(line, Project.MSG_ERR);
-//    System.out.println("[ERROR] " + line);
+    this.task.log("Error: " + line, Project.MSG_ERR);
   }
 
 }
