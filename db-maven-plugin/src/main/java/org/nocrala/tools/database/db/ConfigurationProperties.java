@@ -9,7 +9,7 @@ import java.util.Properties;
 import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
-import org.nocrala.tools.database.db.utils.VersionNumber;
+import org.nocrala.tools.database.db.version.VersionNumber;
 
 public class ConfigurationProperties {
 

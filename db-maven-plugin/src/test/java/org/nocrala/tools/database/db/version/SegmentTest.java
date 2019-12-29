@@ -1,11 +1,12 @@
-package org.nocrala.tools.database.db.utils;
+package org.nocrala.tools.database.db.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.nocrala.tools.database.db.utils.Segment.Type;
+import org.nocrala.tools.database.db.version.Segment;
+import org.nocrala.tools.database.db.version.Segment.Type;
 
 public class SegmentTest {
 

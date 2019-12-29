@@ -9,7 +9,7 @@ import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.database.db.utils.VersionNumber;
+import org.nocrala.tools.database.db.version.VersionNumber;
 
 public class Layer {
 

@@ -25,11 +25,6 @@ public class SQLExecutor {
     IGNORE, INFO, WARN, ERROR
   }
 
-//  private String jdbcDrivxerClass;
-//  private String jdbcURL;
-//  private String jdbcUsername;
-//  private String jdbcPassword;
-
   private Connection conn;
   private Statement stmt;
 

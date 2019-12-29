@@ -12,7 +12,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptE
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
-import org.nocrala.tools.database.db.utils.VersionNumber;
+import org.nocrala.tools.database.db.version.VersionNumber;
 
 public class SourceTest {
 

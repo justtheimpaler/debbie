@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db.utils;
+package org.nocrala.tools.database.db.version;
 
 import java.util.ArrayList;
 import java.util.Iterator;
