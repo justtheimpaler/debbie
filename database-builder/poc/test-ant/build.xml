@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<project name="test-ant" basedir=".">
+
+  <loadproperties srcFile="local.properties" />
+  
+  <target name="db-build">
+    <taskdef name="database-build" classname="org.nocrala.tools.database.db.ant.BuildAntTask">
+      <classpath>
+        <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-build sourcedir="src/database-source"
+                    targetversion="1.1.0"
+                    datascenario="dev1"
+                    layeredbuild="true"
+                    layeredscenarios="false"
+                    onbuilderror="stop"
+                    oncleanerror="continue"
+                    localproperties="local.properties"
+                    delimiter=";"
+                    solodelimiter="false"
+                    casesensitivedelimiter="false"
+                    treatwarningas="error" />
+  </target>
+
+  <target name="db-clean">
+    <taskdef name="database-clean" classname="org.nocrala.tools.database.db.ant.CleanAntTask">
+      <classpath>
+        <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-clean sourcedir="src/database-source"
+                    targetversion="1.1.0"
+                    datascenario="dev1"
+                    layeredbuild="true"
+                    layeredscenarios="false"
+                    onbuilderror="stop"
+                    oncleanerror="continue"
+                    localproperties="local.properties"
+                    delimiter=";"
+                    solodelimiter="false"
+                    casesensitivedelimiter="false"
+                    treatwarningas="error" />
+  </target>
+
+  <target name="db-rebuild">
+    <taskdef name="database-rebuild" classname="org.nocrala.tools.database.db.ant.RebuildAntTask">
+      <classpath>
+        <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
+        <pathelement location="${jdbc.driverclasspath}" />
+      </classpath>
+    </taskdef>
+    <database-rebuild sourcedir="src/database-source"
+                      targetversion="1.1.0"
+                      datascenario="dev1"
+                      layeredbuild="true"
+                      layeredscenarios="false"
+                      onbuilderror="stop"
+                      oncleanerror="continue"
+                      localproperties="local.properties"
+                      delimiter=";"
+                      solodelimiter="false"
+                      casesensitivedelimiter="false"
+                      treatwarningas="error" />
+  </target>
+
+</project>
