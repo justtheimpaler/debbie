@@ -7,45 +7,33 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>dbtest</name>
-  <url>http://maven.apache.org</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
   <profiles>
 
     <!-- Default test -->
 
     <profile>
-      <id>main</id>
+      <id>default</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.1.0</version>
             <configuration>
-              <sourcedir>testdata/dbsrc</sourcedir>
-              <version>1.1.0</version>
-              <scenario>dev1</scenario>
+              <sourcedir>testdata/database-source</sourcedir>
+              <targetversion>1.1.0</targetversion>
+              <datascenario>dev1</datascenario>
               <layeredbuild>true</layeredbuild>
-              <layeredscenarios>false</layeredscenarios>
-              <buildonerrorcontinue>false</buildonerrorcontinue>
-              <cleanonerrorcontinue>true</cleanonerrorcontinue>
-              <localproperties>localdatabase.properties</localproperties>
+              <layeredscenario>false</layeredscenario>
+              <onbuilderror>stop</onbuilderror>
+              <oncleanerror>continue</oncleanerror>
+              <localproperties>local.properties</localproperties>
             </configuration>
             <dependencies>
               <dependency>

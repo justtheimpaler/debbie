@@ -38,8 +38,7 @@ public class CleanAntTask extends Task {
     AntFeedback feedback = new AntFeedback(this);
 
     feedback.info("Clean database from: " + this.sourcedir + " -- version: "
-        + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
-        + (this.datascenario != null ? this.datascenario : "no scenario"));
+        + (this.targetversion != null ? this.targetversion : "n/a"));
 
     File basedir = new File(".");
 

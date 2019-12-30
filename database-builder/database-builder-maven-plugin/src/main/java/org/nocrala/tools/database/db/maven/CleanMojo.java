@@ -69,8 +69,7 @@ public class CleanMojo extends AbstractMojo {
     MojoFeedback feedback = new MojoFeedback(this);
 
     feedback.info("Clean database from: " + this.sourcedir + " -- version: "
-        + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
-        + (this.datascenario != null ? this.datascenario : "no scenario"));
+        + (this.targetversion != null ? this.targetversion : "n/a"));
 
     ConfigurationProperties config;
     try {
