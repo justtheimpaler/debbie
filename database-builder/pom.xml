@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.nocrala.tools.database.builder</groupId>
+  <artifactId>database-builder</artifactId>
+  <version>1.1.0</version>
+  <packaging>pom</packaging>
+    
+  <name>db-maven-plugin Maven Plugin</name>
+
+  <description>
+    This Maven plugin automates the build, rebuild, and clean operations on a project database based
+    on the SQL source code available in a strict, versioned structure in the the SCM.
+  </description>
+
+  <url>https://sourceforge.net/projects/tartarus/</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>valarcon</id>
+      <name>Vladimir Alarcon</name>
+      <email>vladimiralarcon@yahoo.com</email>
+      <organization>Empirical Inc.</organization>
+      <organizationUrl />
+      <roles>
+        <role>Programmer</role>
+      </roles>
+      <timezone>America/New York</timezone>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <scm>
+    <developerConnection>scm:git:ssh://git.code.sf.net/p/tartarus/dbm</developerConnection>
+    <url>https://sourceforge.net/p/tartarus/dbm/ci/master/tree/</url>
+    <tag>db-maven-plugin-1.0.0</tag>
+  </scm>
+    
+  <modules>
+    <module>database-builder-core</module>
+    <module>database-builder-ant-plugin</module>
+    <module>database-builder-maven-plugin</module>
+  </modules>
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+  </distributionManagement>
+
+  <profiles>
+
+    <profile>
+      <id>release</id>
+      <build>
+
+        <plugins>
+
+          <!-- Produce sources package - For Maven Central publishing -->
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+ 
+          <!-- Produce the Javadocs package - For Maven Central publishing -->
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- Sign components using GPG -->
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts-passphrase</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>      
+
+        </plugins>
+
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>
+

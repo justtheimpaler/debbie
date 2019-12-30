@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>database-maven-plugin</artifactId>
+  <artifactId>database-builder-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
   <properties>
@@ -13,9 +13,9 @@
   </properties>
 
   <parent>
-    <groupId>org.nocrala.tools.database</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <groupId>org.nocrala.tools.database.builder</groupId>
+    <artifactId>database-builder</artifactId>
+    <version>1.1.0</version>
   </parent>
 
   <dependencies>
@@ -25,7 +25,7 @@
     <dependency>
       <groupId>org.nocrala.tools.database</groupId>
       <artifactId>database-builder-core</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     
     <!-- Unit testing -->
@@ -38,7 +38,7 @@
     </dependency>
 
     <!-- Maven Plugin dependencies -->
-    
+
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
@@ -169,7 +169,7 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>      
+          </plugin>
 
         </plugins>
 

@@ -2,64 +2,68 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
-import org.junit.Test;
 import org.nocrala.tools.database.db.ConfigurationProperties;
-import org.nocrala.tools.database.db.executor.Delimiter;
+import org.nocrala.tools.database.db.ConfigurationProperties.ConfigurationException;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
-import org.nocrala.tools.database.db.version.VersionNumber;
 
 public class SourceTest {
 
-  @Test
+  // @Test
   public void testMain() {
 
-    // performTest();
+    performTest();
 
   }
 
   private void performTest() {
+
     // Parameters
 
-    String databaseDir = "testdata/dbsrc";
-    String version = "1.1.0";
-    String scenario = "dev1";
+    File basedir = new File(".");
 
-    boolean layeredBuild = true;
-    boolean layeredScenarios = false;
-    boolean buildOnErrorContinue = false;
-    boolean cleanOnErrorContinue = true;
+    String sourcedir = "testdata/dbsrc";
+    String targetversion = "1.1.0";
+    String datascenario = "dev1";
 
-    String localdatabaseproperties = "testdata/localdatabase.properties";
+    String layeredBuild = "true";
+    String layeredScenario = "false";
+    String onbuilderror = "stop";
+    String oncleanerror = "continue";
 
-    Delimiter del = new Delimiter(";", false, false);
+    String localproperties = "testdata/localdatabase.properties";
+
+    String delimitersequence = ";";
+    String solodelimiter = "false";
+    String casesensitivedelimiter = "false";
+
+    String treatwarningsas = null;
 
     // Execution
 
     TestFeedback feedback = new TestFeedback();
-
-    File dbdir = new File(databaseDir);
-    File propsFile = new File(localdatabaseproperties);
-    VersionNumber currentVersion = new VersionNumber(version);
 
     Source s;
     try {
       ConfigurationProperties config = null;
       s = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
       return;
     }
 
     SQLExecutor sqlExecutor = null;
 
+    ConfigurationProperties config;
     try {
-      ConfigurationProperties config = null;
+      config = new ConfigurationProperties(basedir, sourcedir, targetversion, datascenario, layeredBuild,
+          layeredScenario, onbuilderror, oncleanerror, delimitersequence, solodelimiter, casesensitivedelimiter,
+          treatwarningsas, localproperties, feedback);
+
       sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
       System.out.println("Invalid properties file: " + renderException(e));
@@ -69,11 +73,15 @@ public class SourceTest {
       System.out.println("Could not connect to database: " + renderException(e));
       // e.printStackTrace();
       return;
+    } catch (ConfigurationException e) {
+      System.out.println("Invalid configuration: " + renderException(e));
+      e.printStackTrace();
+      return;
     }
 
     try {
 
-      s.build(currentVersion, sqlExecutor);
+      s.build(config.getTargetVersion(), sqlExecutor);
       // s.clean(currentVersion, sqlExecutor, feedback );
       // s.rebuild(currentVersion, scenario, sqlExecutor, feedback );
 

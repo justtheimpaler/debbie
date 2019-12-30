@@ -293,6 +293,7 @@ public class SQLScriptParserTest {
     return sts.toArray(new ScriptSQLStatement[0]);
   }
 
+  @SuppressWarnings("unused")
   private void print(final ScriptSQLStatement[] t) {
     System.out.println("t.length=" + t.length);
     for (ScriptSQLStatement s : t) {
