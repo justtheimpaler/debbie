@@ -23,7 +23,7 @@
     <!-- Dependency on database builder core -->
 
     <dependency>
-      <groupId>org.nocrala.tools.database</groupId>
+      <groupId>org.nocrala.tools.database.builder</groupId>
       <artifactId>database-builder-core</artifactId>
       <version>${project.version}</version>
     </dependency>
