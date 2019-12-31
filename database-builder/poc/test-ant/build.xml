@@ -2,40 +2,43 @@
 <project name="test-ant" basedir=".">
 
   <loadproperties srcFile="local.properties" />
-  
+
   <target name="db-build">
     <taskdef name="database-build" classname="org.nocrala.tools.database.db.ant.BuildAntTask">
       <classpath>
         <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
-        <pathelement location="${jdbc.driverclasspath}" />
+        <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
     <database-build sourcedir="src/database-source"
                     targetversion="1.1.0"
                     datascenario="dev1"
                     layeredbuild="true"
-                    layeredscenarios="false"
+                    layeredscenario="false"
                     onbuilderror="stop"
                     oncleanerror="continue"
-                    localproperties="local.properties"
                     delimiter=";"
                     solodelimiter="false"
                     casesensitivedelimiter="false"
-                    treatwarningas="error" />
+                    treatwarningas="error"
+                    jdbcdriverclass="org.postgresql.Driver"
+                    jdbcurl="jdbc:postgresql://192.168.56.213:5432/postgres"
+                    jdbcusername="postgres"
+                    jdbcpassword="mypassword" />
   </target>
 
   <target name="db-clean">
     <taskdef name="database-clean" classname="org.nocrala.tools.database.db.ant.CleanAntTask">
       <classpath>
         <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
-        <pathelement location="${jdbc.driverclasspath}" />
+        <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
     <database-clean sourcedir="src/database-source"
                     targetversion="1.1.0"
                     datascenario="dev1"
                     layeredbuild="true"
-                    layeredscenarios="false"
+                    layeredscenario="false"
                     onbuilderror="stop"
                     oncleanerror="continue"
                     localproperties="local.properties"
@@ -49,21 +52,25 @@
     <taskdef name="database-rebuild" classname="org.nocrala.tools.database.db.ant.RebuildAntTask">
       <classpath>
         <pathelement location="lib/database-builder-ant-plugin-1.1.0-jar-with-dependencies.jar" />
-        <pathelement location="${jdbc.driverclasspath}" />
+        <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
     <database-rebuild sourcedir="src/database-source"
-                      targetversion="1.1.0"
+                      targetversion="1.0.2"
                       datascenario="dev1"
                       layeredbuild="true"
-                      layeredscenarios="false"
+                      layeredscenario="false"
                       onbuilderror="stop"
                       oncleanerror="continue"
-                      localproperties="local.properties"
                       delimiter=";"
                       solodelimiter="false"
                       casesensitivedelimiter="false"
-                      treatwarningas="error" />
+                      treatwarningas="error"
+                      jdbcdriverclass="org.postgresql.Driver"
+                      jdbcurl="jdbc:postgresql://192.168.56.213:5432/postgres"
+                      jdbcusername="postgres"
+                      jdbcpassword="mypassword"
+                      localproperties="local.properties" />
   </target>
 
 </project>

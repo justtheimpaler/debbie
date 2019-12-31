@@ -2,8 +2,9 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
-import org.nocrala.tools.database.db.ConfigurationProperties;
-import org.nocrala.tools.database.db.ConfigurationProperties.ConfigurationException;
+import org.nocrala.tools.database.db.RawParametersProvider;
+import org.nocrala.tools.database.db.Configuration;
+import org.nocrala.tools.database.db.Configuration.ConfigurationException;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -11,7 +12,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileE
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
 
-public class SourceTest {
+public class SourceTest implements RawParametersProvider {
 
   // @Test
   public void testMain() {
@@ -26,30 +27,13 @@ public class SourceTest {
 
     File basedir = new File(".");
 
-    String sourcedir = "testdata/dbsrc";
-    String targetversion = "1.1.0";
-    String datascenario = "dev1";
-
-    String layeredBuild = "true";
-    String layeredScenario = "false";
-    String onbuilderror = "stop";
-    String oncleanerror = "continue";
-
-    String localproperties = "testdata/localdatabase.properties";
-
-    String delimitersequence = ";";
-    String solodelimiter = "false";
-    String casesensitivedelimiter = "false";
-
-    String treatwarningsas = null;
-
     // Execution
 
     TestFeedback feedback = new TestFeedback();
 
     Source s;
     try {
-      ConfigurationProperties config = null;
+      Configuration config = null;
       s = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e1) {
       e1.printStackTrace();
@@ -58,11 +42,9 @@ public class SourceTest {
 
     SQLExecutor sqlExecutor = null;
 
-    ConfigurationProperties config;
+    Configuration config;
     try {
-      config = new ConfigurationProperties(basedir, sourcedir, targetversion, datascenario, layeredBuild,
-          layeredScenario, onbuilderror, oncleanerror, delimitersequence, solodelimiter, casesensitivedelimiter,
-          treatwarningsas, localproperties, feedback);
+      config = new Configuration(basedir, feedback, this);
 
       sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
@@ -116,6 +98,95 @@ public class SourceTest {
     }
     return sb.toString();
 
+  }
+
+  //
+
+  private String sourcedir = "testdata/dbsrc";
+  private String targetversion = "1.1.0";
+  private String datascenario = "dev1";
+
+  private String layeredbuild = "true";
+  private String layeredscenario = "false";
+
+  private String onbuilderror = "stop";
+  private String oncleanerror = "continue";
+
+  private String localproperties = "testdata/local.properties";
+
+  private String delimiter = ";";
+  private String solodelimiter = "false";
+  private String casesensitivedelimiter = "false";
+
+  private String treatwarningas = "warning";
+
+  private String jdbcdriverclass;
+  private String jdbcurl;
+  private String jdbcusername;
+  private String jdbcpassword;
+
+  public String getSourcedir() {
+    return sourcedir;
+  }
+
+  public String getTargetversion() {
+    return targetversion;
+  }
+
+  public String getDatascenario() {
+    return datascenario;
+  }
+
+  public String getLayeredbuild() {
+    return layeredbuild;
+  }
+
+  public String getLayeredscenario() {
+    return layeredscenario;
+  }
+
+  public String getOnbuilderror() {
+    return onbuilderror;
+  }
+
+  public String getOncleanerror() {
+    return oncleanerror;
+  }
+
+  public String getLocalproperties() {
+    return localproperties;
+  }
+
+  public String getDelimiter() {
+    return delimiter;
+  }
+
+  public String getSolodelimiter() {
+    return solodelimiter;
+  }
+
+  public String getCasesensitivedelimiter() {
+    return casesensitivedelimiter;
+  }
+
+  public String getTreatwarningas() {
+    return treatwarningas;
+  }
+
+  public String getJdbcdriverclass() {
+    return jdbcdriverclass;
+  }
+
+  public String getJdbcurl() {
+    return jdbcurl;
+  }
+
+  public String getJdbcusername() {
+    return jdbcusername;
+  }
+
+  public String getJdbcpassword() {
+    return jdbcpassword;
   }
 
 }

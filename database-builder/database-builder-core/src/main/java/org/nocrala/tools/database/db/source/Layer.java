@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.nocrala.tools.database.db.ConfigurationProperties;
+import org.nocrala.tools.database.db.Configuration;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -23,10 +23,10 @@ public class Layer {
   private File scenariosDir;
   private Map<String, Scenario> scenarios;
 
-  private ConfigurationProperties config;
+  private Configuration config;
   private Feedback feedback;
 
-  public Layer(final VersionNumber versionNumber, final File dir, final ConfigurationProperties config,
+  public Layer(final VersionNumber versionNumber, final File dir, final Configuration config,
       final Feedback feedback) {
     this.versionNumber = versionNumber;
     this.config = config;

@@ -2,7 +2,7 @@ package org.nocrala.tools.database.db.source;
 
 import java.io.File;
 
-import org.nocrala.tools.database.db.ConfigurationProperties;
+import org.nocrala.tools.database.db.Configuration;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -14,10 +14,10 @@ public class Scenario {
 
   private File buildData;
 
-  private ConfigurationProperties config;
+  private Configuration config;
   private Feedback feedback;
 
-  public Scenario(final File dir, final ConfigurationProperties config, final Feedback feedback) {
+  public Scenario(final File dir, final Configuration config, final Feedback feedback) {
     this.buildData = new File(dir, BUILD_DATA_FILE);
     this.config = config;
     this.feedback = feedback;

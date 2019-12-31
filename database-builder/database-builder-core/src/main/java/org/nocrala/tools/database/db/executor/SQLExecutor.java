@@ -12,8 +12,8 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import org.nocrala.tools.database.db.ConfigurationProperties;
-import org.nocrala.tools.database.db.ConfigurationProperties.OnError;
+import org.nocrala.tools.database.db.Configuration;
+import org.nocrala.tools.database.db.Configuration.OnError;
 import org.nocrala.tools.database.db.parser.SQLScriptParser;
 import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
@@ -28,10 +28,10 @@ public class SQLExecutor {
   private Connection conn;
   private Statement stmt;
 
-  private ConfigurationProperties config;
+  private Configuration config;
   private Feedback feedback;
 
-  public SQLExecutor(final ConfigurationProperties config, final Feedback feedback)
+  public SQLExecutor(final Configuration config, final Feedback feedback)
       throws InvalidPropertiesFileException, CouldNotConnectToDatabaseException {
 
     this.config = config;

@@ -6,8 +6,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.nocrala.tools.database.db.ConfigurationProperties;
-import org.nocrala.tools.database.db.ConfigurationProperties.ConfigurationException;
+import org.nocrala.tools.database.db.BuildInformation;
+import org.nocrala.tools.database.db.Configuration;
+import org.nocrala.tools.database.db.Configuration.ConfigurationException;
+import org.nocrala.tools.database.db.RawParametersProvider;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -15,10 +17,12 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileE
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
+import org.nocrala.tools.database.db.utils.OUtil;
 
 @Mojo(name = "rebuild", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
-public class RebuildMojo extends AbstractMojo {
+public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
 
+  private static final String OPERATION = "Rebuild";
   private static final String MOJO_ERROR_MESSAGE = "Database rebuild failed";
 
   // Parameters
@@ -36,7 +40,7 @@ public class RebuildMojo extends AbstractMojo {
   private String layeredbuild = null;
 
   @Parameter()
-  private String layeredscenarios = null;
+  private String layeredscenario = null;
 
   @Parameter()
   private String onbuilderror = null;
@@ -59,6 +63,18 @@ public class RebuildMojo extends AbstractMojo {
   @Parameter()
   private String treatwarningas = null;
 
+  @Parameter()
+  private String jdbcdriverClass;
+
+  @Parameter()
+  private String jdbcurl;
+
+  @Parameter()
+  private String jdbcusername;
+
+  @Parameter()
+  private String jdbcpassword;
+
   // Project information
 
   @Parameter(defaultValue = "${project}", required = true, readonly = true)
@@ -68,19 +84,19 @@ public class RebuildMojo extends AbstractMojo {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
-    feedback.info("Rebuild database from: " + this.sourcedir + " -- version: "
-        + (this.targetversion != null ? this.targetversion : "n/a") + " -- scenario: "
-        + (this.datascenario != null ? this.datascenario : "no scenario"));
+    feedback.info("Database Builder " + BuildInformation.PROJECT_VERSION + " (build "
+        + BuildInformation.PROJECT_BUILD_ID + ")" + " - " + OPERATION);
 
-    ConfigurationProperties config;
+    Configuration config;
     try {
-      config = new ConfigurationProperties(this.project.getBasedir(), this.sourcedir, this.targetversion,
-          this.datascenario, this.layeredbuild, this.layeredscenarios, this.onbuilderror, this.oncleanerror,
-          this.delimiter, this.solodelimiter, this.casesensitivedelimiter, this.treatwarningas, this.localproperties,
-          feedback);
+      config = new Configuration(this.project.getBasedir(), feedback, this);
     } catch (ConfigurationException e1) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
+
+    feedback.info(OPERATION + " database from: " + config.getDatabaseSourceDir()//
+        + " -- target version: " + OUtil.coalesce(config.getTargetVersion(), "n/a") //
+        + " -- data scenario: " + OUtil.coalesce(config.getDataScenario(), "no scenario"));
 
     Source source;
     try {
@@ -106,6 +122,72 @@ public class RebuildMojo extends AbstractMojo {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
+  }
+
+  // RawParametersProvider
+
+  public String getSourcedir() {
+    return sourcedir;
+  }
+
+  public String getTargetversion() {
+    return targetversion;
+  }
+
+  public String getDatascenario() {
+    return datascenario;
+  }
+
+  public String getLayeredbuild() {
+    return layeredbuild;
+  }
+
+  public String getLayeredscenario() {
+    return layeredscenario;
+  }
+
+  public String getOnbuilderror() {
+    return onbuilderror;
+  }
+
+  public String getOncleanerror() {
+    return oncleanerror;
+  }
+
+  public String getLocalproperties() {
+    return localproperties;
+  }
+
+  public String getDelimiter() {
+    return delimiter;
+  }
+
+  public String getSolodelimiter() {
+    return solodelimiter;
+  }
+
+  public String getCasesensitivedelimiter() {
+    return casesensitivedelimiter;
+  }
+
+  public String getTreatwarningas() {
+    return treatwarningas;
+  }
+
+  public String getJdbcdriverclass() {
+    return jdbcdriverClass;
+  }
+
+  public String getJdbcurl() {
+    return jdbcurl;
+  }
+
+  public String getJdbcusername() {
+    return jdbcusername;
+  }
+
+  public String getJdbcpassword() {
+    return jdbcpassword;
   }
 
 }

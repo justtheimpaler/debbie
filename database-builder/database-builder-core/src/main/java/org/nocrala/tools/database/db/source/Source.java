@@ -3,7 +3,7 @@ package org.nocrala.tools.database.db.source;
 import java.io.File;
 import java.util.TreeMap;
 
-import org.nocrala.tools.database.db.ConfigurationProperties;
+import org.nocrala.tools.database.db.Configuration;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -12,12 +12,12 @@ import org.nocrala.tools.database.db.version.VersionNumber;
 
 public class Source {
 
-  private ConfigurationProperties config;
+  private Configuration config;
   private Feedback feedback;
 
   private TreeMap<VersionNumber, Layer> layers;
 
-  public Source(final ConfigurationProperties config, final Feedback feedback) throws InvalidDatabaseSourceException {
+  public Source(final Configuration config, final Feedback feedback) throws InvalidDatabaseSourceException {
 
     this.config = config;
     this.feedback = feedback;
