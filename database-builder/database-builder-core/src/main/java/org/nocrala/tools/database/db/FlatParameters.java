@@ -1,5 +1,6 @@
 package org.nocrala.tools.database.db;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -55,12 +56,13 @@ public class FlatParameters {
   private String jdbcusername;
   private String jdbcpassword;
 
-  public FlatParameters(final RawParametersProvider provider, final Feedback feedback) throws ConfigurationException {
+  public FlatParameters(final File basedir, final RawParametersProvider provider, final Feedback feedback)
+      throws ConfigurationException {
 
     Properties props = new Properties();
     if (!SUtil.isEmpty(provider.getLocalproperties())) {
       try {
-        props.load(new FileReader(provider.getLocalproperties()));
+        props.load(new FileReader(new File(basedir, provider.getLocalproperties())));
       } catch (FileNotFoundException e) {
         feedback.error("Local properties file not found (" + provider.getLocalproperties() + "): " + e.getMessage());
         throw new ConfigurationException();

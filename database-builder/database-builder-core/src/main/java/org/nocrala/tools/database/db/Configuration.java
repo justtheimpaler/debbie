@@ -45,7 +45,7 @@ public class Configuration {
   public Configuration(final File basedir, final Feedback feedback, final RawParametersProvider rawParameters)
       throws ConfigurationException {
 
-    FlatParameters flat = new FlatParameters(rawParameters, feedback);
+    FlatParameters flat = new FlatParameters(basedir, rawParameters, feedback);
 
     // Database source dir
 
