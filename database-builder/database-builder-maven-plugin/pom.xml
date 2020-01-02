@@ -93,7 +93,7 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.6.0</version>
         <configuration>
-          <goalPrefix>database-builder</goalPrefix>
+          <goalPrefix>db</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
         </configuration>
         <executions>
