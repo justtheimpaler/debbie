@@ -1,0 +1,16 @@
+plugins {
+  id 'java-library'
+  id 'org.nocrala.tools.database.db.gradle'
+}
+
+repositories {
+  jcenter()
+  maven {
+    url "http://192.168.56.209:8080"
+  }
+}
+
+dependencies {
+  classpath 'lib/database-builder-gradle-plugin-1.1.0.jar'
+  implementation "org.nocrala.tools.database.builder:database-builder-gradle-plugin:0.9.0"
+}

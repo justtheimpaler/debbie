@@ -58,6 +58,7 @@
     <module>database-builder-core</module>
     <module>database-builder-ant-plugin</module>
     <module>database-builder-maven-plugin</module>
+    <module>database-builder-gradle-plugin</module>
   </modules>
   
   <distributionManagement>

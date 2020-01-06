@@ -1,0 +1,29 @@
+plugins {
+  id 'java'
+  id 'java-gradle-plugin'
+}
+
+repositories {
+  mavenLocal()
+  maven { url 'target/dependencies' }
+}
+
+dependencies {
+  implementation "org.nocrala.tools.database.builder:database-builder-core:$version"
+}
+
+tasks.register('javadocJar', Jar) {
+  archiveClassifier = 'javadoc'
+  from javadoc.destinationDir
+  dependsOn javadoc
+}
+
+tasks.register('sourcesJar', Jar) {
+  archiveClassifier = 'sources'
+  from sourceSets.main.allSource
+  dependsOn classes
+}
+
+assemble.dependsOn javadocJar
+assemble.dependsOn sourcesJar
+

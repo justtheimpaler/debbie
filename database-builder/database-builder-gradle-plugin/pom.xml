@@ -3,13 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>gradle-database-builder-plugin</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>database-builder-gradle-plugin</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <gradle.executable>gradle</gradle.executable>
   </properties>
 
   <parent>
@@ -18,9 +18,10 @@
     <version>1.1.0</version>
   </parent>
 
+<!-- 
   <dependencies>
 
-    <!-- Dependency on database builder core -->
+    Dependency on database builder core
 
     <dependency>
       <groupId>org.nocrala.tools.database.builder</groupId>
@@ -28,7 +29,8 @@
       <version>${project.version}</version>
     </dependency>
     
-    <!-- Unit testing -->
+    
+    Unit testing
 
     <dependency>
       <groupId>junit</groupId>
@@ -36,33 +38,142 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    
 
   </dependencies>
+    -->
 
   <build>
     <plugins>
 
-      <!-- Set compiler to Java 8 -->
+      <!-- 1. Disable the Maven compilation (should only be compiled by Gradle) -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-        <version>1.1</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <executions>
           <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>      
+
+      <!-- 2. Copy all dependencies to target/dependencies -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>generate-resources</phase>
             <goals>
-              <goal>toolchain</goal>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+              <useBaseVersion>true</useBaseVersion>
+              <addParentPoms>true</addParentPoms>
+              <copyPom>true</copyPom>
+              <useRepositoryLayout>true</useRepositoryLayout>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 3. Execute Gradle command -->
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <id>gradle</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <executable>${gradle.executable}</executable>
+              <arguments>
+                <argument>--warning-mode</argument>
+                <argument>all</argument>
+                <argument>clean</argument>
+                <argument>build</argument>
+                <argument>-Pgroup=${project.groupId}</argument>
+                <argument>-Pversion=${project.version}</argument>
+                <argument>-S</argument>
+              </arguments>
+            </configuration>
+            <goals>
+              <goal>exec</goal>
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <toolchains>
-            <jdk>
-              <version>8</version>
-              <vendor>oracle</vendor>
-            </jdk>
-          </toolchains>
-        </configuration>
+      </plugin>
+      
+      <!-- 4. Copy generated JARs -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-gradle-jars</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+
+            <configuration>
+              <outputDirectory>${basedir}/target</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>build/libs/</directory>
+                  <includes>
+                    <include>${project.artifactId}-${project.version}.jar</include>
+                    <include>${project.artifactId}-${project.version}-javadoc.jar</include>
+                    <include>${project.artifactId}-${project.version}-sources.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- 5. Attach copied JARs to build -->
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/${project.artifactId}-${project.version}-javadoc.jar</file>
+                  <type>jar</type>
+                  <classifier>javadoc</classifier>
+                </artifact>
+                <artifact>
+                  <file>target/${project.artifactId}-${project.version}-sources.jar</file>
+                  <type>jar</type>
+                  <classifier>sources</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>
