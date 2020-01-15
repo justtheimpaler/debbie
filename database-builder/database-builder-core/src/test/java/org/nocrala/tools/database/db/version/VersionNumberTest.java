@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.nocrala.tools.database.db.version.VersionNumber;
 
-public class VersionTest {
+public class VersionNumberTest {
 
   @Test
   public void testNullVersion() {
