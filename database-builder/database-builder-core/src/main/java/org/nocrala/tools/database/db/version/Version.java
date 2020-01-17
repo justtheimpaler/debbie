@@ -82,6 +82,10 @@ public class Version implements Comparable<Version> {
     return this.parts.size();
   }
 
+  public String toString() {
+    return this.baseVersion + (this.isSnapshot ? (this.isUpperCaseSnapshot() ? UPPER_SNAPSHOT : LOWER_SNAPSHOT) : "");
+  }
+
   // Utility
 
   public boolean before(final Version other) {
