@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db.revision;
+package org.nocrala.tools.database.db.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

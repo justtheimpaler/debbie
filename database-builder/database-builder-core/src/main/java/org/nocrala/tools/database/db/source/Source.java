@@ -8,14 +8,14 @@ import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.database.db.version.VersionNumber;
+import org.nocrala.tools.database.db.version.Version;
 
 public class Source {
 
   private Configuration config;
   private Feedback feedback;
 
-  private TreeMap<VersionNumber, Layer> layers;
+  private TreeMap<Version, Layer> layers;
 
   public Source(final Configuration config, final Feedback feedback) throws InvalidDatabaseSourceException {
 
@@ -26,14 +26,14 @@ public class Source {
 
     this.layers = new TreeMap<>();
     for (File f : dirs) {
-      VersionNumber v = new VersionNumber(f.getName());
+      Version v = new Version(f.getName());
       Layer l = new Layer(v, f, this.config, this.feedback);
       this.layers.put(v, l);
     }
 
   }
 
-  public void build(final VersionNumber version, final SQLExecutor sqlExecutor)
+  public void build(final Version version, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(version);
     if (l == null) {
@@ -42,7 +42,7 @@ public class Source {
     }
 
     if (this.config.isLayeredBuild()) {
-      for (VersionNumber v : this.layers.keySet()) {
+      for (Version v : this.layers.keySet()) {
         if (!v.after(version)) {
           Layer vl = this.layers.get(v);
           vl.build(sqlExecutor);
@@ -58,7 +58,7 @@ public class Source {
 
   }
 
-  public void clean(final VersionNumber version, final SQLExecutor sqlExecutor)
+  public void clean(final Version version, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     Layer l = this.layers.get(version);
     if (l == null) {
@@ -67,7 +67,7 @@ public class Source {
     }
 
     if (this.config.isLayeredBuild()) {
-      for (VersionNumber v : this.layers.descendingKeySet()) {
+      for (Version v : this.layers.descendingKeySet()) {
         if (!v.after(version)) {
           Layer vl = this.layers.get(v);
           vl.clean(sqlExecutor);
@@ -79,7 +79,7 @@ public class Source {
 
   }
 
-  public void rebuild(final VersionNumber version, final SQLExecutor sqlExecutor)
+  public void rebuild(final Version version, final SQLExecutor sqlExecutor)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     clean(version, sqlExecutor);
     build(version, sqlExecutor);

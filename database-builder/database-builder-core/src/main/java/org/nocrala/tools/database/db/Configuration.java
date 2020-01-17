@@ -6,7 +6,7 @@ import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.utils.SUtil;
-import org.nocrala.tools.database.db.version.VersionNumber;
+import org.nocrala.tools.database.db.version.Version;
 
 public class Configuration {
 
@@ -25,7 +25,7 @@ public class Configuration {
   // Computed properties
 
   private File databaseSourceDir;
-  private VersionNumber targetVersion;
+  private Version targetVersion;
   private String datascenario;
 
   private boolean layeredBuild;
@@ -76,7 +76,7 @@ public class Configuration {
       throw new ConfigurationException();
     }
 
-    this.targetVersion = new VersionNumber(flat.getTargetversion());
+    this.targetVersion = new Version(flat.getTargetversion());
 
     // Scenario
 
@@ -254,7 +254,7 @@ public class Configuration {
     return databaseSourceDir;
   }
 
-  public VersionNumber getTargetVersion() {
+  public Version getTargetVersion() {
     return targetVersion;
   }
 

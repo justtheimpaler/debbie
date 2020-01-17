@@ -1,4 +1,4 @@
-package org.nocrala.tools.database.db.revision;
+package org.nocrala.tools.database.db.version;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,6 +80,20 @@ public class Version implements Comparable<Version> {
 
   int getNumberOfParts() {
     return this.parts.size();
+  }
+
+  // Utility
+
+  public boolean before(final Version other) {
+    return this.compareTo(other) == THIS_IS_LESS_THAN_OTHER;
+  }
+
+  public boolean same(final Version other) {
+    return this.compareTo(other) == THIS_IS_EQUAL_TO_OTHER;
+  }
+
+  public boolean after(final Version other) {
+    return this.compareTo(other) == THIS_IS_GREATER_THAN_OTHER;
   }
 
   // Comparable<Version>

@@ -9,7 +9,7 @@ import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor;
 import org.nocrala.tools.database.db.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.database.db.version.VersionNumber;
+import org.nocrala.tools.database.db.version.Version;
 
 public class Layer {
 
@@ -17,7 +17,7 @@ public class Layer {
   private final static String CLEAN_FILE = "clean.sql";
   private final static String SCENARIOS_DIR = "scenarios";
 
-  private VersionNumber versionNumber;
+  private Version versionNumber;
   private File build;
   private File clean;
   private File scenariosDir;
@@ -26,7 +26,7 @@ public class Layer {
   private Configuration config;
   private Feedback feedback;
 
-  public Layer(final VersionNumber versionNumber, final File dir, final Configuration config,
+  public Layer(final Version versionNumber, final File dir, final Configuration config,
       final Feedback feedback) {
     this.versionNumber = versionNumber;
     this.config = config;
@@ -81,7 +81,7 @@ public class Layer {
 
   // Getters
 
-  public VersionNumber getVersionNumber() {
+  public Version getVersionNumber() {
     return versionNumber;
   }
 

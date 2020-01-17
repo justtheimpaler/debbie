@@ -1,11 +1,11 @@
-package org.nocrala.tools.database.db.revision;
+package org.nocrala.tools.database.db.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.nocrala.tools.database.db.revision.Atom.Type;
+import org.nocrala.tools.database.db.version.Atom.Type;
 
 public class AtomTest {
 
