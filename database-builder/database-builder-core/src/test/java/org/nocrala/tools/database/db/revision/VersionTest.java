@@ -56,30 +56,35 @@ public class VersionTest {
 
     try {
       new Version(" ");
+      fail("version cannot include spaces");
     } catch (IllegalArgumentException e) {
       // OK - test passed
     }
 
     try {
       new Version("\t");
+      fail("version cannot include tabs");
     } catch (IllegalArgumentException e) {
       // OK - test passed
     }
 
     try {
       new Version(".");
+      fail("version cannot start with a dot");
     } catch (IllegalArgumentException e) {
       // OK - test passed
     }
 
     try {
       new Version("-");
+      fail("version cannot include dashes, except for the -SNAPSHOT ending");
     } catch (IllegalArgumentException e) {
       // OK - test passed
     }
 
     try {
       new Version("_");
+      fail("version cannot include underscores");
     } catch (IllegalArgumentException e) {
       // OK - test passed
     }
@@ -138,6 +143,12 @@ public class VersionTest {
 
     v = new Version("123abc.DEF456.789gHi012jkL.345mNo");
 
+    v = new Version("1");
+    assertEquals(1, v.getNumberOfParts());
+
+    v = new Version("1.");
+    assertEquals(2, v.getNumberOfParts());
+
   }
 
   @Test
@@ -156,7 +167,6 @@ public class VersionTest {
 
     // alphabetic
 
-    assertEquals(0, new Version("").compareTo(new Version("")));
     assertEquals(0, new Version("a").compareTo(new Version("a")));
     assertEquals(0, new Version("abc").compareTo(new Version("abc")));
     assertEquals(0, new Version("asldkjeqweopijsdlfksjdtliujlsirjslALDKAJSDLAKSDJalkd")
@@ -167,18 +177,6 @@ public class VersionTest {
 
   @Test
   public void testLessThan() {
-
-    // Empty segment always before integers and/or strings
-
-    assertNeg(new Version("").compareTo(new Version("0")));
-    assertNeg(new Version("").compareTo(new Version("1")));
-    assertNeg(new Version("").compareTo(new Version("12")));
-    assertNeg(new Version("").compareTo(new Version("123")));
-
-    assertNeg(new Version("").compareTo(new Version("a")));
-    assertNeg(new Version("").compareTo(new Version("b")));
-    assertNeg(new Version("").compareTo(new Version("ab")));
-    assertNeg(new Version("").compareTo(new Version("abc")));
 
     // integers always before strings
 
@@ -240,15 +238,15 @@ public class VersionTest {
     assertNeg(new Version("1.").compareTo(new Version("1.A")));
     assertNeg(new Version("1.0").compareTo(new Version("1.0.")));
 
-    assertNeg(new Version("1").compareTo(new Version("1-SNAPSHOT")));
-    assertNeg(new Version("a").compareTo(new Version("a-SNAPSHOT")));
-    assertNeg(new Version("1").compareTo(new Version("1-snapshot")));
-    assertNeg(new Version("a").compareTo(new Version("a-snapshot")));
+    assertNeg(new Version("1-SNAPSHOT").compareTo(new Version("1")));
+    assertNeg(new Version("a-SNAPSHOT").compareTo(new Version("a")));
+    assertNeg(new Version("1-snapshot").compareTo(new Version("1")));
+    assertNeg(new Version("a-snapshot").compareTo(new Version("a")));
 
-    assertNeg(new Version("1.").compareTo(new Version("1.-SNAPSHOT")));
-    assertNeg(new Version("a.1").compareTo(new Version("a.1-SNAPSHOT")));
-    assertNeg(new Version("1.3.").compareTo(new Version("1.3.-snapshot")));
-    assertNeg(new Version("a.4.1").compareTo(new Version("a.4.1-snapshot")));
+    assertNeg(new Version("1.-SNAPSHOT").compareTo(new Version("1.")));
+    assertNeg(new Version("a.1-SNAPSHOT").compareTo(new Version("a.1")));
+    assertNeg(new Version("1.3.-snapshot").compareTo(new Version("1.3.")));
+    assertNeg(new Version("a.4.1-snapshot").compareTo(new Version("a.4.1")));
 
     assertNeg(new Version("1.0").compareTo(new Version("1.1")));
     assertNeg(new Version("1.0").compareTo(new Version("1.a")));
@@ -271,18 +269,6 @@ public class VersionTest {
 
   @Test
   public void testGreaterThan() {
-
-    // integers and strings always after empty segments
-
-    assertPos(new Version("0").compareTo(new Version("")));
-    assertPos(new Version("1").compareTo(new Version("")));
-    assertPos(new Version("12").compareTo(new Version("")));
-    assertPos(new Version("123").compareTo(new Version("")));
-
-    assertPos(new Version("a").compareTo(new Version("")));
-    assertPos(new Version("b").compareTo(new Version("")));
-    assertPos(new Version("ab").compareTo(new Version("")));
-    assertPos(new Version("abc").compareTo(new Version("")));
 
     // string always after integers
 
@@ -338,50 +324,51 @@ public class VersionTest {
 
     // multi part
 
-    assertNeg(new Version("1.").compareTo(new Version("1")));
-    assertNeg(new Version("1.0").compareTo(new Version("1.")));
-    assertNeg(new Version("1.a").compareTo(new Version("1.")));
-    assertNeg(new Version("1.A").compareTo(new Version("1.")));
-    assertNeg(new Version("1.0.").compareTo(new Version("1.0")));
+    assertPos(new Version("1.").compareTo(new Version("1")));
+    assertPos(new Version("1.0").compareTo(new Version("1.")));
+    assertPos(new Version("1.a").compareTo(new Version("1.")));
+    assertPos(new Version("1.A").compareTo(new Version("1.")));
+    assertPos(new Version("1.0.").compareTo(new Version("1.0")));
 
-    assertNeg(new Version("1-SNAPSHOT").compareTo(new Version("1")));
-    assertNeg(new Version("a-SNAPSHOT").compareTo(new Version("a")));
-    assertNeg(new Version("1-snapshot").compareTo(new Version("1")));
-    assertNeg(new Version("a-snapshot").compareTo(new Version("a")));
+    assertPos(new Version("1").compareTo(new Version("1-SNAPSHOT")));
+    assertPos(new Version("a").compareTo(new Version("a-SNAPSHOT")));
+    assertPos(new Version("1").compareTo(new Version("1-snapshot")));
+    assertPos(new Version("a").compareTo(new Version("a-snapshot")));
 
-    assertNeg(new Version("1.-SNAPSHOT").compareTo(new Version("1.")));
-    assertNeg(new Version("a.1-SNAPSHOT").compareTo(new Version("a.1")));
+    assertPos(new Version("1.").compareTo(new Version("1.-SNAPSHOT")));
+    assertPos(new Version("a.1").compareTo(new Version("a.1-SNAPSHOT")));
 
-    assertNeg(new Version("1.3.-snapshot").compareTo(new Version("1.3.")));
-    assertNeg(new Version("a.4.1-snapshot").compareTo(new Version("a.4.1")));
+    assertPos(new Version("1.3.").compareTo(new Version("1.3.-snapshot")));
+    assertPos(new Version("a.4.1").compareTo(new Version("a.4.1-snapshot")));
 
-    assertNeg(new Version("1.1").compareTo(new Version("1.0")));
-    assertNeg(new Version("1.a").compareTo(new Version("1.0")));
-    assertNeg(new Version("1.a").compareTo(new Version("1.999")));
+    assertPos(new Version("1.1").compareTo(new Version("1.0")));
+    assertPos(new Version("1.a").compareTo(new Version("1.0")));
+    assertPos(new Version("1.a").compareTo(new Version("1.999")));
 
-    assertNeg(new Version("1.a.2.c").compareTo(new Version("1.a.2.b")));
-    assertNeg(new Version("1.a.3.b").compareTo(new Version("1.a.2.b")));
-    assertNeg(new Version("1.b.2.b").compareTo(new Version("1.a.2.b")));
-    assertNeg(new Version("2.a.2.b").compareTo(new Version("1.a.2.b")));
+    assertPos(new Version("1.a.2.c").compareTo(new Version("1.a.2.b")));
+    assertPos(new Version("1.a.3.b").compareTo(new Version("1.a.2.b")));
+    assertPos(new Version("1.b.2.b").compareTo(new Version("1.a.2.b")));
+    assertPos(new Version("2.a.2.b").compareTo(new Version("1.a.2.b")));
 
-    assertNeg(new Version("12").compareTo(new Version("3.0")));
-    assertNeg(new Version("12.").compareTo(new Version("3.0")));
-    assertNeg(new Version("12.0").compareTo(new Version("3.0")));
+    assertPos(new Version("12").compareTo(new Version("3.0")));
+    assertPos(new Version("12.").compareTo(new Version("3.0")));
+    assertPos(new Version("12.0").compareTo(new Version("3.0")));
 
-    assertNeg(new Version("7.12").compareTo(new Version("7.3.0")));
-    assertNeg(new Version("7.12.").compareTo(new Version("7.3.0")));
-    assertNeg(new Version("7.12.0").compareTo(new Version("7.3.0")));
+    assertPos(new Version("7.12").compareTo(new Version("7.3.0")));
+    assertPos(new Version("7.12.").compareTo(new Version("7.3.0")));
+    assertPos(new Version("7.12.0").compareTo(new Version("7.3.0")));
 
   }
 
   // Utils
 
   private void assertNeg(final int c) {
-    assertTrue(c < 0);
+    assertTrue("Expected a negative value but found: " + c, c < 0);
+
   }
 
   private void assertPos(final int c) {
-    assertTrue(c > 0);
+    assertTrue("Expected a positive value but found: " + c, c > 0);
   }
 
 }

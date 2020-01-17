@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Part implements Comparable<Part> {
+class Part implements Comparable<Part> {
 
   private List<Atom> atoms;
 
