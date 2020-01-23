@@ -24,6 +24,8 @@ public class Configuration {
 
   // Computed properties
 
+  private File basedir;
+
   private File databaseSourceDir;
   private Version targetVersion;
   private String datascenario;
@@ -44,6 +46,8 @@ public class Configuration {
 
   public Configuration(final File basedir, final Feedback feedback, final RawParametersProvider rawParameters)
       throws ConfigurationException {
+
+    this.basedir = basedir;
 
     FlatParameters flat = new FlatParameters(basedir, rawParameters, feedback);
 
@@ -249,6 +253,10 @@ public class Configuration {
   }
 
   // Getters
+
+  public File getBasedir() {
+    return basedir;
+  }
 
   public File getDatabaseSourceDir() {
     return databaseSourceDir;

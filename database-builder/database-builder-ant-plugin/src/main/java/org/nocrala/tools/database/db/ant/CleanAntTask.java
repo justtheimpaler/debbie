@@ -15,6 +15,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileE
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
+import org.nocrala.tools.database.db.utils.FUtil;
 import org.nocrala.tools.database.db.utils.OUtil;
 
 public class CleanAntTask extends Task implements RawParametersProvider {
@@ -63,7 +64,8 @@ public class CleanAntTask extends Task implements RawParametersProvider {
       throw new BuildException(ERROR_MESSAGE);
     }
 
-    feedback.info(OPERATION + " database from: " + config.getDatabaseSourceDir()//
+    File sourceDir = FUtil.relativize(basedir, config.getDatabaseSourceDir());
+    feedback.info(OPERATION + " database from: " + sourceDir //
         + " -- target version: " + OUtil.coalesce(config.getTargetVersion(), "n/a") //
         + " -- data scenario: " + OUtil.coalesce(config.getDataScenario(), "no scenario"));
 

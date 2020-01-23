@@ -13,26 +13,25 @@ import org.nocrala.tools.database.db.version.Version;
 
 public class Layer {
 
-  private final static String BUILD_FILE = "build.sql";
-  private final static String CLEAN_FILE = "clean.sql";
+  private final static String BUILD_SCRIPT_FILE = "build.sql";
+  private final static String CLEAN_SCRIPT_FILE = "clean.sql";
   private final static String SCENARIOS_DIR = "scenarios";
 
   private Version versionNumber;
-  private File build;
-  private File clean;
+  private File buildScript;
+  private File cleanScript;
   private File scenariosDir;
   private Map<String, Scenario> scenarios;
 
   private Configuration config;
   private Feedback feedback;
 
-  public Layer(final Version versionNumber, final File dir, final Configuration config,
-      final Feedback feedback) {
+  public Layer(final Version versionNumber, final File dir, final Configuration config, final Feedback feedback) {
     this.versionNumber = versionNumber;
     this.config = config;
     this.feedback = feedback;
-    this.build = new File(dir, BUILD_FILE);
-    this.clean = new File(dir, CLEAN_FILE);
+    this.buildScript = new File(dir, BUILD_SCRIPT_FILE);
+    this.cleanScript = new File(dir, CLEAN_SCRIPT_FILE);
 
     this.scenarios = new HashMap<>();
     this.scenariosDir = new File(dir, SCENARIOS_DIR);
@@ -48,20 +47,20 @@ public class Layer {
   // Build
 
   public void build(final SQLExecutor sqlExecutor) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    if (this.build.exists() && this.build.isFile()) {
-      sqlExecutor.run(this.build, this.config.getOnBuildError());
+    if (this.buildScript.exists() && this.buildScript.isFile()) {
+      sqlExecutor.run(this.buildScript, this.config.getBasedir(), this.config.getOnBuildError());
     } else {
-      this.feedback.warn("" + this.build + ": not found -- skipped");
+      this.feedback.warn("" + this.buildScript + ": not found -- skipped");
     }
   }
 
   // Clean
 
   public void clean(final SQLExecutor sqlExecutor) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
-    if (this.clean.exists() && this.clean.isFile()) {
-      sqlExecutor.run(this.clean, this.config.getOnCleanError());
+    if (this.cleanScript.exists() && this.cleanScript.isFile()) {
+      sqlExecutor.run(this.cleanScript, this.config.getBasedir(), this.config.getOnCleanError());
     } else {
-      this.feedback.warn("" + this.clean + ": not found -- skipped");
+      this.feedback.warn("" + this.cleanScript + ": not found -- skipped");
     }
   }
 
