@@ -76,6 +76,7 @@
 
     <profile>
       <id>release</id>
+      <!-- Remember to previously run: export GPG_TTY=$(tty) -->
       <build>
 
         <plugins>
