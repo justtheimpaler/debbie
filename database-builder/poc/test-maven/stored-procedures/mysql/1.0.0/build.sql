@@ -2,19 +2,10 @@
 
 -- @delimiter // solo
 
-create procedure plustwo (in a integer, out b integer)
+create trigger fix_data before insert on users 
+for each row 
 begin
-  set b = a + 2;
+  set NEW.bouquet = '["12","10","11","8","9","6","7","5","4","3","2","1"]';
 end;
 //
-
-create function f2x (dept tinytext) 
-returns int
-begin
-return 1;
-end;
-//
-
-
-
 

@@ -4,5 +4,6 @@ drop procedure plustwo;
 
 drop function addtwof;
 
+drop function julian2week;
 
 

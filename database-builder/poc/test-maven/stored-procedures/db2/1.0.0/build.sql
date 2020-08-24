@@ -16,4 +16,11 @@ begin
 end
 //
 
+create function julian2week(in j integer) returns integer
+language sql
+begin
+  return week(date(cast(cast((1900 + j/1000) as integer) as char(4))
+    || '-01-01') + (mod(j, 1000) - 1) days);
+end
+//
 

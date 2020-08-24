@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.nocrala.tools.database.db.Configuration;
 import org.nocrala.tools.database.db.Configuration.OnError;
 import org.nocrala.tools.database.db.parser.SQLScriptParser;
+import org.nocrala.tools.database.db.parser.SQLScriptParser.InvalidSQLScriptException;
 import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
 import org.nocrala.tools.database.db.utils.StreamUtil;
@@ -91,8 +92,12 @@ public class SQLExecutor {
       }
       this.feedback.info("> " + f.getPath() + " -- " + stats.render());
     } catch (IOException e) {
-      this.feedback.error("Could not read SQL script (" + f.getPath() + "): " + EUtil.renderException(e));
+      this.feedback.error("Could not read SQL script " + f.getPath() + ": " + EUtil.renderException(e));
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
+    } catch (InvalidSQLScriptException e) {
+      this.feedback.error(
+          "Invalid SQL script " + f.getPath() + " (line " + e.getLineNumber() + "): " + EUtil.renderException(e));
+      throw new SQLScriptAbortedException("Invalid SQL script: " + f, e);
     }
   }
 

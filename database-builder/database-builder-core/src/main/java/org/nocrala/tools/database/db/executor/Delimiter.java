@@ -24,4 +24,10 @@ public class Delimiter {
     return this.solo;
   }
 
+  public String toString() {
+    return "[" + this.token //
+        + (this.solo ? (" solo" + (this.caseSensitiveSolo ? " caseinsensitive" : " casesensitive")) : " inline") //
+        + "]";
+  }
+
 }
