@@ -1,11 +1,11 @@
-package org.nocrala.tools.database.db.revision;
+package org.nocrala.tools.database.db.version;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Part implements Comparable<Part> {
+class Part implements Comparable<Part> {
 
   private List<Atom> atoms;
 

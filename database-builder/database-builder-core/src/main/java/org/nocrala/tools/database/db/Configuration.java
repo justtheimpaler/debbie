@@ -6,7 +6,7 @@ import org.nocrala.tools.database.db.executor.Delimiter;
 import org.nocrala.tools.database.db.executor.Feedback;
 import org.nocrala.tools.database.db.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.database.db.utils.SUtil;
-import org.nocrala.tools.database.db.version.VersionNumber;
+import org.nocrala.tools.database.db.version.Version;
 
 public class Configuration {
 
@@ -24,8 +24,10 @@ public class Configuration {
 
   // Computed properties
 
+  private File basedir;
+
   private File databaseSourceDir;
-  private VersionNumber targetVersion;
+  private Version targetVersion;
   private String datascenario;
 
   private boolean layeredBuild;
@@ -44,6 +46,8 @@ public class Configuration {
 
   public Configuration(final File basedir, final Feedback feedback, final RawParametersProvider rawParameters)
       throws ConfigurationException {
+
+    this.basedir = basedir;
 
     FlatParameters flat = new FlatParameters(basedir, rawParameters, feedback);
 
@@ -76,7 +80,7 @@ public class Configuration {
       throw new ConfigurationException();
     }
 
-    this.targetVersion = new VersionNumber(flat.getTargetversion());
+    this.targetVersion = new Version(flat.getTargetversion());
 
     // Scenario
 
@@ -250,11 +254,15 @@ public class Configuration {
 
   // Getters
 
+  public File getBasedir() {
+    return basedir;
+  }
+
   public File getDatabaseSourceDir() {
     return databaseSourceDir;
   }
 
-  public VersionNumber getTargetVersion() {
+  public Version getTargetVersion() {
     return targetVersion;
   }
 

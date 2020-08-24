@@ -24,7 +24,7 @@
           <plugin>
             <groupId>org.nocrala.tools.database.builder</groupId>
             <artifactId>database-builder-maven-plugin</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>1.2.1</version>
             <configuration>
               <sourcedir>testdata/database-source</sourcedir>
               <targetversion>1.1.0</targetversion>
@@ -55,7 +55,7 @@
           <plugin>
             <groupId>org.nocrala.tools.database.builder</groupId>
             <artifactId>database-builder-maven-plugin</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>1.2.2-SNAPSHOT</version>
             <configuration>
               <sourcedir>testdata/postgresql-test</sourcedir>
               <targetversion>1.0.0</targetversion>

@@ -1,8 +1,8 @@
-package org.nocrala.tools.database.db.revision;
+package org.nocrala.tools.database.db.version;
 
 import java.math.BigInteger;
 
-public class Atom implements Comparable<Atom> {
+class Atom implements Comparable<Atom> {
 
   public enum Type {
     EMPTY, NUMERIC, ALPHABETIC

@@ -18,9 +18,12 @@ import org.nocrala.tools.database.db.parser.SQLScriptParser;
 import org.nocrala.tools.database.db.parser.SQLScriptParser.InvalidSQLScriptException;
 import org.nocrala.tools.database.db.parser.ScriptSQLStatement;
 import org.nocrala.tools.database.db.utils.EUtil;
+import org.nocrala.tools.database.db.utils.FUtil;
 import org.nocrala.tools.database.db.utils.StreamUtil;
 
 public class SQLExecutor {
+
+  private static final String PROMPT = "sql>";
 
   public static enum TreatWarningAs {
     IGNORE, INFO, WARN, ERROR
@@ -52,7 +55,7 @@ public class SQLExecutor {
 
   // typical delimiters: ; // go (separated line)
 
-  public void run(final File f, final OnError onError)
+  public void run(final File f, final File basedir, final OnError onError)
       throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     SQLStats stats = new SQLStats();
     ScriptSQLStatement st = null;
@@ -77,7 +80,7 @@ public class SQLExecutor {
                   + st.getSql() + "\n" + warnings);
               break;
             case ERROR:
-              handleError(f, onError, stats, st, warnings, null);
+              handleError(f, basedir, onError, stats, st, warnings, null);
               break;
             default: // Ignore
               stats.addSuccessful();
@@ -87,10 +90,11 @@ public class SQLExecutor {
           }
 
         } catch (SQLException e) {
-          handleError(f, onError, stats, st, null, e);
+          handleError(f, basedir, onError, stats, st, null, e);
         }
       }
-      this.feedback.info("> " + f.getPath() + " -- " + stats.render());
+      String relPath = FUtil.relativize(basedir, f).getPath();
+      this.feedback.info(PROMPT + " " + relPath + " -- " + stats.render());
     } catch (IOException e) {
       this.feedback.error("Could not read SQL script " + f.getPath() + ": " + EUtil.renderException(e));
       throw new CouldNotReadSQLScriptException("Could not read SQL script: " + f, e);
@@ -101,8 +105,8 @@ public class SQLExecutor {
     }
   }
 
-  private void handleError(final File f, final OnError onError, final SQLStats stats, final ScriptSQLStatement st,
-      final String warnings, final SQLException e) throws SQLScriptAbortedException {
+  private void handleError(final File f, final File basedir, final OnError onError, final SQLStats stats,
+      final ScriptSQLStatement st, final String warnings, final SQLException e) throws SQLScriptAbortedException {
     stats.addFailed();
     String msg = "Failed to execute statement (" + f.getPath() + ":" + st.getLine() + "):\n" + st.getSql()
         + (e == null ? "" : "\n" + e.getMessage()) + (warnings == null ? "" : ("\n" + warnings));
@@ -113,7 +117,8 @@ public class SQLExecutor {
       this.feedback.info("");
     } else {
       stats.setFailedSQLStatement(st);
-      this.feedback.info("> " + f.getPath() + " -- " + stats.render());
+      String relPath = FUtil.relativize(basedir, f).getPath();
+      this.feedback.info(PROMPT + " " + relPath + " -- " + stats.render());
       throw new SQLScriptAbortedException(msg, e);
     }
   }

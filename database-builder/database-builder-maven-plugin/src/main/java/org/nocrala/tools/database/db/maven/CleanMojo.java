@@ -1,5 +1,7 @@
 package org.nocrala.tools.database.db.maven;
 
+import java.io.File;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -17,6 +19,7 @@ import org.nocrala.tools.database.db.executor.SQLExecutor.InvalidPropertiesFileE
 import org.nocrala.tools.database.db.executor.SQLExecutor.SQLScriptAbortedException;
 import org.nocrala.tools.database.db.source.Source;
 import org.nocrala.tools.database.db.source.Source.InvalidDatabaseSourceException;
+import org.nocrala.tools.database.db.utils.FUtil;
 import org.nocrala.tools.database.db.utils.OUtil;
 
 @Mojo(name = "clean", defaultPhase = LifecyclePhase.COMPILE) // Goal name set to "build"
@@ -94,7 +97,8 @@ public class CleanMojo extends AbstractMojo implements RawParametersProvider {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     }
 
-    feedback.info(OPERATION + " database from: " + config.getDatabaseSourceDir()//
+    File sourceDir = FUtil.relativize(this.project.getBasedir(), config.getDatabaseSourceDir());
+    feedback.info(OPERATION + " database from: " + sourceDir //
         + " -- target version: " + OUtil.coalesce(config.getTargetVersion(), "n/a") //
         + " -- data scenario: " + OUtil.coalesce(config.getDataScenario(), "no scenario"));
 

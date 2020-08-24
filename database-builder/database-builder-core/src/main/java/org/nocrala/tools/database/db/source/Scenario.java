@@ -27,7 +27,7 @@ public class Scenario {
 
   public void build(final SQLExecutor sqlExecutor) throws CouldNotReadSQLScriptException, SQLScriptAbortedException {
     if (this.buildData.exists() && this.buildData.isFile()) {
-      sqlExecutor.run(this.buildData, this.config.getOnBuildError());
+      sqlExecutor.run(this.buildData, this.config.getBasedir(), this.config.getOnBuildError());
     } else {
       this.feedback.warn("-- " + this.buildData + " does not exist -- skipped");
     }
