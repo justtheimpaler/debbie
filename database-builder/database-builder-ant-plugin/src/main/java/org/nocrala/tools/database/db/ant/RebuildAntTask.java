@@ -43,7 +43,7 @@ public class RebuildAntTask extends Task implements RawParametersProvider {
 
   private String treatwarningas = null;
 
-  private String jdbcdriverClass;
+  private String jdbcdriverclass;
   private String jdbcurl;
   private String jdbcusername;
   private String jdbcpassword;
@@ -151,8 +151,8 @@ public class RebuildAntTask extends Task implements RawParametersProvider {
     this.treatwarningas = treatwarningas;
   }
 
-  public void setJdbcdriverClass(String jdbcdriverClass) {
-    this.jdbcdriverClass = jdbcdriverClass;
+  public void setJdbcdriverclass(String jdbcdriverclass) {
+    this.jdbcdriverclass = jdbcdriverclass;
   }
 
   public void setJdbcurl(String jdbcurl) {
@@ -218,7 +218,7 @@ public class RebuildAntTask extends Task implements RawParametersProvider {
   }
 
   public String getJdbcdriverclass() {
-    return jdbcdriverClass;
+    return jdbcdriverclass;
   }
 
   public String getJdbcurl() {

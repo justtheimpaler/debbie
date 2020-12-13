@@ -67,7 +67,7 @@ public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
   private String treatwarningas = null;
 
   @Parameter()
-  private String jdbcdriverClass;
+  private String jdbcdriverclass;
 
   @Parameter()
   private String jdbcurl;
@@ -185,7 +185,7 @@ public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
   }
 
   public String getJdbcdriverclass() {
-    return jdbcdriverClass;
+    return jdbcdriverclass;
   }
 
   public String getJdbcurl() {
