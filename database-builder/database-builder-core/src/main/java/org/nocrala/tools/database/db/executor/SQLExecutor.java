@@ -21,7 +21,7 @@ import org.nocrala.tools.database.db.utils.EUtil;
 import org.nocrala.tools.database.db.utils.FUtil;
 import org.nocrala.tools.database.db.utils.StreamUtil;
 
-public class SQLExecutor {
+public class SQLExecutor implements AutoCloseable {
 
   private static final String PROMPT = "sql>";
 
@@ -222,6 +222,13 @@ public class SQLExecutor {
       super(message, cause);
     }
 
+  }
+
+  @Override
+  public void close() throws Exception {
+    if (this.conn != null) {
+      this.conn.close();
+    }
   }
 
 }

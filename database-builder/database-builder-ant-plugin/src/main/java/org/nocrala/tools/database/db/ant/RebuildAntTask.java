@@ -91,6 +91,12 @@ public class RebuildAntTask extends Task implements RawParametersProvider {
       throw new BuildException(ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {
       throw new BuildException(ERROR_MESSAGE);
+    } finally {
+      try {
+        sqlExecutor.close();
+      } catch (Exception e) {
+        feedback.warn("Could not close database connection.");
+      }
     }
 
   }

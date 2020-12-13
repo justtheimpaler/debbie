@@ -124,6 +124,12 @@ public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {
       throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+    } finally {
+      try {
+        sqlExecutor.close();
+      } catch (Exception e) {
+        feedback.warn("Could not close database connection.");
+      }
     }
 
   }
