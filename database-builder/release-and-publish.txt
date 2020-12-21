@@ -17,9 +17,14 @@ The above command line can be suitable for the typical release, and also for con
 Note: When using the Nexus Staging Maven Plugin, it may fail because of "504 Gateway Time-out" errors thrown by Maven Central's server. This 
 is usually due to slowness of the server. When this happens, the release process is unfinished. To finish it type:
 
+If the tag was not created (check with "git tag"), type:
+ $ git tag <version>
+ $ git push origin <version>
+
+Then: 
  $ git checkout tags/<version>
  $ export GPG_TTY=$(tty) && mvn -P release clean deploy
- $ mvn release:clean && git pull && git checkout <my-working-branch>
+ $ mvn release:clean && git checkout <my-working-branch> && git pull
 
 
 ======================================================================
