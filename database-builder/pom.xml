@@ -5,7 +5,7 @@
 
   <groupId>org.nocrala.tools.database.builder</groupId>
   <artifactId>database-builder</artifactId>
-  <version>1.2.3-SNAPSHOT</version>
+  <version>1.2.3</version>
   <packaging>pom</packaging>
     
   <name>Database Builder Project</name>
