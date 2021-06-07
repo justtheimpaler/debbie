@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>tests</groupId>
+  <artifactId>test-trigger</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>test-trigger</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+  </dependencies>
+
+  <profiles>
+
+    <profile>
+      <id>oracle-12c1</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/oracle-12c1</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/oracle-12c1/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.oracle.ojdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>19.3.0.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>db2-10.5</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/db2-10.5</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/db2-10.5/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.ibm.db2</groupId>
+                <artifactId>jcc</artifactId>
+                <version>11.5.0.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>postgresql-12</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/postgresql-12</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/postgresql-12/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.2.5.jre6</version>
+                <type>jar</type>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>sql-server-2014</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/sql-server-2014</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/sql-server-2014/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>7.4.1.jre8</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>maria-db-10.3</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/maria-db-10.3</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/maria-db-10.3/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>2.5.2</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>mysql-8</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.nocrala.tools.database.builder</groupId>
+            <artifactId>database-builder-maven-plugin</artifactId>
+            <version>1.2.3</version>
+            <configuration>
+              <sourcedir>testdata/mysql-8</sourcedir>
+              <targetversion>1.0.0</targetversion>
+              <localproperties>testdata/mysql-8/local.properties</localproperties>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.18</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+
+</project>

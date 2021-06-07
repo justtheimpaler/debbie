@@ -1,0 +1,9 @@
+To run with different database engines:
+
+  mvn -P oracle-12c1 db:build
+  mvn -P db2-10.5 db:build
+  mvn -P postgresql-12 db:build
+  mvn -P sql-server-2014 db:build
+  mvn -P maria-db-10.3 db:build
+  mvn -P mysql-8 db:build
+
