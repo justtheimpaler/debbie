@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+ 
+<project name="SQL-batch-runner" basedir="." default="run-sql">
+ 
+  <loadproperties srcFile="db.properties" />
+ 
+  <target name="run-sql">
+   
+    <tstamp>
+      <format property="start.time" pattern="d-MMM-yyyy, HH:mm:ss" />
+    </tstamp>
+    <echo message="[ Starting at ${start.time} ]" />
+    <echo message="db.driverclass=${db.driverclass}" />
+    <echo message="db.url=${db.url}" />
+    <echo message="db.username=${db.username}" />
+    <echo message="" />
+ 
+    <sql driver="${db.driverclass}"
+         url="${db.url}"
+         userid="${db.username}"
+         password="${db.password}"
+         onerror="abort"
+         print="true"
+         showheaders="true"
+         showtrailers="true"
+         showWarnings="true"
+         delimiter="$del$"
+         >
+      <transaction src="command.sql" />
+      <classpath>
+        <pathelement location="${db.driverlibrary}" />
+      </classpath>
+    </sql>
+ 
+    <tstamp>
+      <format property="end.time" pattern="d-MMM-yyyy, HH:mm:ss" />
+    </tstamp>
+    <echo message="[ Ending at ${end.time} ]" />
+ 
+  </target>
+ 
+</project>

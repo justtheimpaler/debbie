@@ -1,0 +1,17 @@
+Buildfile: /home/valarcon/git/database-builder/database-builder/poc/test-ant/plans/postgresql/build.xml
+
+run-sql:
+     [echo] [ Starting at 19-Jun-2021, 12:30:36 ]
+     [echo] db.driverclass=org.postgresql.Driver
+     [echo] db.url=jdbc:postgresql://192.168.56.214:5432/hotrod
+     [echo] db.username=user1
+     [echo] 
+      [sql] Executing resource: /home/valarcon/git/database-builder/database-builder/poc/test-ant/plans/postgresql/command.sql
+      [sql] 0 rows affected
+      [sql] org.postgresql.util.PSQLWarning: Cost: 0.01 sql warning
+      [sql] 0 rows affected
+      [sql] 2 of 2 SQL statements executed successfully
+     [echo] [ Ending at 19-Jun-2021, 12:30:36 ]
+
+BUILD SUCCESSFUL
+Total time: 0 seconds

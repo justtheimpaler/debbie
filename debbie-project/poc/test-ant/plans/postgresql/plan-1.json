@@ -1,0 +1,70 @@
+[
+	{
+		"Plan": {
+			"Plans": [
+				{
+					"Plans": [
+						{
+							"Alias": "t",
+							"Filter": "((amount + (3 * seq_id)) = 204)",
+							"Node Type": "Seq Scan",
+							"Plan Rows": 1,
+							"Plan Width": 70,
+							"Total Cost": 1.07,
+							"Startup Cost": 0.00,
+							"Relation Name": "transaction",
+							"Parallel Aware": false,
+							"Parent Relationship": "Outer"
+						},
+						{
+							"Alias": "a",
+							"Node Type": "Index Scan",
+							"Plan Rows": 1,
+							"Index Cond": "(id = t.account_id)",
+							"Index Name": "account_pkey",
+							"Plan Width": 276,
+							"Total Cost": 8.17,
+							"Startup Cost": 0.15,
+							"Relation Name": "account",
+							"Parallel Aware": false,
+							"Scan Direction": "Forward",
+							"Parent Relationship": "Inner"
+						}
+					],
+					"Join Type": "Inner",
+					"Node Type": "Nested Loop",
+					"Plan Rows": 1,
+					"Plan Width": 346,
+					"Total Cost": 9.30,
+					"Inner Unique": true,
+					"Startup Cost": 0.15,
+					"Parallel Aware": false,
+					"Parent Relationship": "Outer"
+				},
+				{
+					"Alias": "b",
+					"Filter": "((name)::text ~~ 'V%'::text)",
+					"Node Type": "Index Scan",
+					"Plan Rows": 1,
+					"Index Cond": "(id = t.fed_branch_id)",
+					"Index Name": "federal_branch_pkey",
+					"Plan Width": 82,
+					"Total Cost": 8.17,
+					"Startup Cost": 0.15,
+					"Relation Name": "federal_branch",
+					"Parallel Aware": false,
+					"Scan Direction": "Forward",
+					"Parent Relationship": "Inner"
+				}
+			],
+			"Join Type": "Inner",
+			"Node Type": "Nested Loop",
+			"Plan Rows": 1,
+			"Plan Width": 428,
+			"Total Cost": 20.67,
+			"Inner Unique": true,
+			"Startup Cost": 0.30,
+			"Parallel Aware": false
+		}
+	}
+]

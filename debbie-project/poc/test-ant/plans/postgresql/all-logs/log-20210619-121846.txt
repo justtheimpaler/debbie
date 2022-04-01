@@ -1,0 +1,47 @@
+Buildfile: /home/valarcon/git/database-builder/database-builder/poc/test-ant/plans/postgresql/build.xml
+
+run-sql:
+     [echo] [ Starting at 19-Jun-2021, 12:18:47 ]
+     [echo] db.driverclass=org.postgresql.Driver
+     [echo] db.url=jdbc:postgresql://192.168.56.214:5432/hotrod
+     [echo] db.username=user1
+     [echo] 
+      [sql] Executing resource: /home/valarcon/git/database-builder/database-builder/poc/test-ant/plans/postgresql/command.sql
+      [sql] Failed to execute:  select 1+2  $/$  select 5 * 3
+
+BUILD FAILED
+/home/valarcon/git/database-builder/database-builder/poc/test-ant/plans/postgresql/build.xml:28: org.postgresql.util.PSQLException: ERROR: syntax error at or near "$"
+  Position: 14
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2440)
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2183)
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:308)
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:441)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:365)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:307)
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:293)
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:270)
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:266)
+	at org.apache.tools.ant.taskdefs.SQLExec.execSQL(SQLExec.java:799)
+	at org.apache.tools.ant.taskdefs.SQLExec.runStatements(SQLExec.java:775)
+	at org.apache.tools.ant.taskdefs.SQLExec$Transaction.runTransaction(SQLExec.java:1064)
+	at org.apache.tools.ant.taskdefs.SQLExec$Transaction.access$000(SQLExec.java:999)
+	at org.apache.tools.ant.taskdefs.SQLExec.execute(SQLExec.java:691)
+	at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:292)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:99)
+	at org.apache.tools.ant.Task.perform(Task.java:350)
+	at org.apache.tools.ant.Target.execute(Target.java:449)
+	at org.apache.tools.ant.Target.performTasks(Target.java:470)
+	at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1388)
+	at org.apache.tools.ant.Project.executeTarget(Project.java:1361)
+	at org.apache.tools.ant.helper.DefaultExecutor.executeTargets(DefaultExecutor.java:41)
+	at org.apache.tools.ant.Project.executeTargets(Project.java:1251)
+	at org.apache.tools.ant.Main.runBuild(Main.java:834)
+	at org.apache.tools.ant.Main.startAnt(Main.java:223)
+	at org.apache.tools.ant.launch.Launcher.run(Launcher.java:284)
+	at org.apache.tools.ant.launch.Launcher.main(Launcher.java:101)
+
+Total time: 0 seconds
