@@ -2,7 +2,7 @@ package manualtest;
 
 import java.io.File;
 
-import org.nocrala.tools.database.db.utils.FUtil;
+import org.nocrala.tools.debbie.utils.FUtil;
 
 public class RelPaths {
 
