@@ -6,7 +6,7 @@ import org.nocrala.tools.debbie.executor.Delimiter;
 import org.nocrala.tools.debbie.executor.Feedback;
 import org.nocrala.tools.debbie.executor.SQLExecutor.TreatWarningAs;
 import org.nocrala.tools.debbie.utils.SUtil;
-import org.nocrala.tools.debbie.version.Version;
+import org.nocrala.tools.aversion.Version;
 
 public class Configuration {
 

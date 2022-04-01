@@ -8,7 +8,7 @@ import org.nocrala.tools.debbie.executor.Feedback;
 import org.nocrala.tools.debbie.executor.SQLExecutor;
 import org.nocrala.tools.debbie.executor.SQLExecutor.CouldNotReadSQLScriptException;
 import org.nocrala.tools.debbie.executor.SQLExecutor.SQLScriptAbortedException;
-import org.nocrala.tools.debbie.version.Version;
+import org.nocrala.tools.aversion.Version;
 
 public class Source {
 

@@ -29,6 +29,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.nocrala.tools.aversion</groupId>
+      <artifactId>aversion</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.2.9</version>
