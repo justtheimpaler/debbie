@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.nocrala.tools.database.debbie</groupId>
     <artifactId>debbie-project</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
   </parent>
 
   <dependencies>
