@@ -19,7 +19,7 @@ Debbie:
 
 ## Example
 
-In the simplest form Debbie can prepare a database schema from a SQL source file using (Maven example)`:
+In the simplest form Debbie can prepare a database schema from a SQL source file using (Maven example):
 
 ```bash
 mvn debbie:build
@@ -44,9 +44,9 @@ There are also three corresponding Ant tasks for each one.
 
 ## Versioning
 
-Debbie supports the evolution over time of a database with the use of separate folders for each version.
+This is an optional feature that can be useful to some projects.
 
-Nevertheless, this is an optional feature; a basic project could ignore this feature and have a single folder (e.g. `1.0.0`) where the entire database source code will be stored in a single file.
+Debbie supports the evolution over time of a database with the use of separate folders for each version. On the flip side, if no versioning is needed the entire database source code can be stored in a single folder called `1.0.0` or similar.
 
 When building the database, Debbie will run in sequence all `build.sql` files in the source code until the specified version. When cleaning the database, Debbie will
 execute all `clean.sql` files from the target version down to the initial version, in reverse order. For example, if the database source
@@ -90,6 +90,8 @@ The handling of errors in the build and clean sequences as well as the treatment
 
 ## Data Scenarios
 
+This is an optional feature that can be useful to some projects.
+
 Each version folder (like `1.0.2` in the example above) can optionally include a `scenarios` subfolder that can in turn include one or more
 data scenarios. Only one of these scenarios can be chosen to complement the build sequence; it's selected with the `datascenario` property.
 
@@ -117,10 +119,10 @@ In this case only one data scenario (either `bug-1732`, `feature-188`, or `offic
 ## SQL Delimiters
 
 The example shown below switches the delimiter from `;` (that can be present in the same line as the SQL statement) to
-`\\` that must show up in a separate line (`solo` modifier). The former is suitable for most SQL statements, while the second one
+`//` that must show up in a separate line (`solo` modifier). The former is suitable for most SQL statements, while the second one
 is useful for code blocks, typically used in stored procedures and function definitions.
 
-The example switches back and forth between these delimiters.
+The example switches back and forth between these delimiters. The default delimiter is `;` and, therefore, the first `create table ...` statement will be processed correctly since it ends with it.
 
 
 ```sql
@@ -162,7 +164,7 @@ Debbie can also be called programatically from any JVM application, in a similar
 Debbie's API is not yet documented.
 
 
-## Bugs and Pending Features
+## Pending Features
 
 Multi-line comments (such as `/* multi-line comment */`) are not supported. Only single-line comments (that start with `--`) are supported.
 
