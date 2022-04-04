@@ -44,11 +44,11 @@
   </properties>
 
   <scm>
-    <developerConnection>scm:git:ssh://git.code.sf.net/p/tartarus/dbm</developerConnection>
-    <url>https://sourceforge.net/p/tartarus/dbm/ci/master/tree/</url>
+    <developerConnection>scm:git:git@github.com:justtheimpaler/debbie.git</developerConnection>
+    <url>https://github.com/justtheimpaler/debbie</url>
     <tag>1.2.3</tag>
   </scm>
-    
+
   <modules>
     <module>debbie</module>
     <module>debbie-ant-plugin</module>
