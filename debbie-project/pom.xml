@@ -15,6 +15,8 @@
     the SQL source code in the repository.
   </description>
 
+  <url>https://github.com/justtheimpaler/debbie</url>
+
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>

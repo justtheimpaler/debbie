@@ -11,20 +11,21 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <debbie.version>1.3.1-SNAPSHOT</debbie.version>
   </properties>
 
   <profiles>
 
-    <!-- Default test -->
+    <!-- Main test -->
 
     <profile>
-      <id>default</id>
+      <id>main</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database.builder</groupId>
-            <artifactId>database-builder-maven-plugin</artifactId>
-            <version>1.2.1</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>testdata/database-source</sourcedir>
               <targetversion>1.1.0</targetversion>
@@ -53,9 +54,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database.builder</groupId>
-            <artifactId>database-builder-maven-plugin</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>testdata/postgresql-test</sourcedir>
               <targetversion>1.0.0</targetversion>
@@ -81,9 +82,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/oracle</sourcedir>
               <version>1.0.0</version>
@@ -109,9 +110,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/db2</sourcedir>
               <version>1.0.0</version>
@@ -137,12 +138,12 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/postgresql</sourcedir>
-              <version>1.0.0</version>
+              <targetversion>1.0.0</targetversion>
               <localproperties>stored-procedures/postgresql/localdatabase.properties</localproperties>
               <treatwarningas>warn</treatwarningas>
             </configuration>
@@ -166,9 +167,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/sqlserver</sourcedir>
               <version>1.0.0</version>
@@ -194,9 +195,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/mariadb</sourcedir>
               <version>1.0.0</version>
@@ -222,9 +223,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.nocrala.tools.database</groupId>
-            <artifactId>db-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <groupId>org.nocrala.tools.database.debbie</groupId>
+            <artifactId>debbie-maven-plugin</artifactId>
+            <version>${debbie.version}</version>
             <configuration>
               <sourcedir>stored-procedures/mysql</sourcedir>
               <version>1.0.0</version>
