@@ -8,27 +8,25 @@ Debbie prepares database schemas from source SQL files stored in the source code
 Debbie:
 
 - Can be used from Maven and Ant (or any IDE that uses these tools as well).
-- Follows a strict source folder versioning structure that matches an evolving schema over the life of the project.
-- Supports multiple data scenarios to reset the database to any baseline data required for testing or debugging.
-- Handles stored procedures as well as common SQL.
+- Can follows a source folder structure that matches an evolving schema over the life of the project.
+- Supports multiple data scenarios to reset the database to any baseline data scenario that could be required for testing or debugging purposes.
+- Handles stored procedures gracefully.
 - Supports project-wide configuration and also team member-specific configuration.
 - Embraces separate databases model (one per team member), as well as unique centralized database model.
 - Can be used in a headless mode in an automated environment for testing or building the application.
-- Supports at least Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Other database
-engines should probably supported, but are not tested.
+- Supports Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Most other  databases should be supported through JDBC, but are not tested.
 
 
 ## Example
 
-In the simplest form Debbie can prepare a database schema from a SQL source file using:
+In the simplest form Debbie can prepare a database schema from a SQL source file using (Maven example)`:
 
 ```bash
 mvn debbie:build
 ```
 
 This command will connect to a database and run the SQL statements in the `build.sql` located in the source folder. 
-The connection details and location of the base source folder are specified in the `pom.xml` file (or Ant properties). They can be 
-set up locally as well if these values differ from the project-wide configuration.
+The connection details and location of the base source folder are specified in the `pom.xml` file (or Ant properties). They can be overriden by local propertied if these values differ from the project-wide configuration.
 
 
 ## Commands
@@ -39,20 +37,20 @@ Debbie implements three commands:
 - `clean`: to clean the database schema.
 - `rebuild`: to clean and build the database schema.
 
-From Maven they take the form: `mvn debbie:build`, `mvn debbie:clean`, or `mvn debbie:rebuild` respectively.
+When used in Maven they take the form: `mvn debbie:build`, `mvn debbie:clean`, or `mvn debbie:rebuild` respectively.
 
-There are also three corresponding Ant tasks for them.
+There are also three corresponding Ant tasks for each one.
 
 
 ## Versioning
 
-Debbie supports database evolution over time with the use of separate folders for each version.
+Debbie supports the evolution over time of a database with the use of separate folders for each version.
 
-This is an optional feature. A basic project can have a single folder (e.g. `1.0.0`) where all the database source code will be stored.
+Nevertheless, this is an optional feature; a basic project could ignore this feature and have a single folder (e.g. `1.0.0`) where the entire database source code will be stored in a single file.
 
-When building the database, Debbie will run all `build.sql` files in the source code until the specified version. When cleaning the database, Debbie will
-execute all `clean.sql` files from the target version down to the initial version, in reverse order. For example, if the source
-folder is set up as `src/database`, then the database source structure could look like:
+When building the database, Debbie will run in sequence all `build.sql` files in the source code until the specified version. When cleaning the database, Debbie will
+execute all `clean.sql` files from the target version down to the initial version, in reverse order. For example, if the database source
+folder in the project is set up as `src/database`, then the database source structure could look like:
 
 ```
 src/
@@ -82,11 +80,10 @@ Debbie won't run previous SQL scripts, but only the specified version. This is s
 
 ## Error Handling
 
-By default, errors during the *build* sequence are considered fatal and Debbie will stop the execution. Errors during the *clean* sequence are by default not considered
-fatal, Debbie will display them but will continue the execution normally. In practice a clean sequence can be run multiple times in a row. This can be useful if the developer considers the database objcts dependencies will sort themselves out if run enough times in a row.
+By default, errors during the *build* sequence are considered fatal and Debbie will stop the execution. Errors during the *clean* sequence are by default considered
+non-fatal; Debbie will display them but will continue the execution normally. In practice a clean sequence can be run multiple times in a row. This can be useful if the developer considers the database objects dependencies will sort themselves out if `clean` is run enough times in a row.
 
-Warnings are never considered fatal and are displayed (by default). They can be useful in some databases like Sybase (SAP ASE), where the execution
-plan of a query is displayed in the warnings output stream.
+Warnings messages are displayed, by default. They can be useful in some databases like Sybase (SAP ASE), where the execution plan of a query is displayed in the warnings output stream. In other databases (such as DB2) they can be quite serious, and maybe should be treated as errors.
 
 The handling of errors in the build and clean sequences as well as the treatment of warnings can be changed throught the configuration properties.
 
@@ -114,32 +111,7 @@ For example, the directory for one of the versions could look like:
       clean.sql
 ```
 
-In this case only one data scenario (either `bug-1732`, `feature-188`, or `official-qa`) can be selected for a build execution.
-
-## Configuration properties
-
-The basic properties are typically set up in the `pom.xml` file (or Ant script) and represent the project-wide set up. These properties can be superseded or complemented by a local properties file that each team member can tweak separately.
-
-The full list of configuration properties is shown below:
-
-| Property                 | Description  | Default Value |
-| - | - | - |
-| sourcedir                | The base folder for the database source | -- |
-| targetversion            | The version that Debbie should produce | -- |
-| datascenario             | An optional data scenario to produce | -- |
-| layeredbuild             | Is the build layered or non-layered? | true |
-| layeredscenario          | Is the scenario layered or non-layered? | false |
-| onbuilderror             | On build error: stop or continue | stop |
-| oncleanerror             | On clean error: stop or continue | continue |
-| localproperties          | Location of the local properties, if any | -- |
-| delimiter                | SQL block delimiter | ; |
-| solodelimiter            | Is block delimiter alone in its line? | false |
-| casesensitivedelimiter   | Is block delimiter case sensitive? | false |
-| treatwarningas           | Treat warnings as: ignore, info, warn, error | warn | 
-| jdbcdriverclass          | The JDBC driver class name | -- |
-| jdbcurl                  | The JDBC URL | -- |
-| jdbcusername             | The JDBC username | -- |
-| jdbcpassword             | The JDBC passwod | -- |
+In this case only one data scenario (either `bug-1732`, `feature-188`, or `official-qa`) can be selected for a build execution. The corresponding `build-data.sql` SQL script will be run on top of the standard `build.sql` file.
 
 
 ## SQL Delimiters
@@ -182,6 +154,7 @@ create sequence seq_account;
 
 There is also a `caseinsensitive` modifier. It can be useful for delimiter sequences such as "Go" that can also be typed as "go" or "GO".
 
+
 ## Programatic Use
 
 Debbie can also be called programatically from any JVM application, in a similar manner as the Maven and Ant plugins are implemented.
@@ -193,7 +166,34 @@ Debbie's API is not yet documented.
 
 Multi-line comments (such as `/* multi-line comment */`) are not supported. Only single-line comments (that start with `--`) are supported.
 
-## Appendix 1 - Maven Example
+
+## Appendix 1 - Configuration properties
+
+The basic properties are typically set up in the `pom.xml` file (or Ant script) and represent the project-wide set up. These properties can be superseded or complemented by a local properties file that each team member can tweak separately.
+
+The full list of configuration properties is shown below:
+
+| Property                 | Description  | Default Value |
+| - | - | - |
+| sourcedir                | The base folder for the database source | -- |
+| targetversion            | The version that Debbie should produce | -- |
+| datascenario             | An optional data scenario to produce | -- |
+| layeredbuild             | Is the build layered or non-layered? | true |
+| layeredscenario          | Is the scenario layered or non-layered? | false |
+| onbuilderror             | On build error: stop or continue | stop |
+| oncleanerror             | On clean error: stop or continue | continue |
+| localproperties          | Location of the local properties, if any | -- |
+| delimiter                | The initial SQL block delimiter | ; |
+| solodelimiter            | Is the block delimiter alone in its line? | false |
+| casesensitivedelimiter   | Is the block delimiter case sensitive? | false |
+| treatwarningas           | Treat warnings as: ignore, info, warn, error | warn |
+| jdbcdriverclass          | The JDBC driver class name | -- |
+| jdbcurl                  | The JDBC URL | -- |
+| jdbcusername             | The JDBC username | -- |
+| jdbcpassword             | The JDBC passwod | -- |
+
+
+## Appendix 2 - Maven Example
 
 A typical Maven configuration could look like:
 
@@ -222,7 +222,7 @@ A typical Maven configuration could look like:
           </plugin>
 ```
 
-## Appendix 2 - Ant Example
+## Appendix 3 - Ant Example
 
 The following example show Debbie's three taks defined as Ant tasks. They can be called as:
 
