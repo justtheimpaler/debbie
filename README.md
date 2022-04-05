@@ -203,7 +203,7 @@ A typical Maven configuration could look like:
           <plugin>
             <groupId>org.nocrala.tools.database.debbie</groupId>
             <artifactId>debbie-maven-plugin</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.2</version>
             <configuration>
               <sourcedir>src/database</sourcedir>
               <targetversion>1.2.3</targetversion>
@@ -240,7 +240,7 @@ Ant section:
   <target name="debbie-build">
     <taskdef name="debbie-build-task" classname="org.nocrala.tools.debbie.ant.BuildAntTask">
       <classpath>
-        <pathelement location="lib/debbie-ant-plugin-1.3.0-jar-with-dependencies.jar" />
+        <pathelement location="lib/debbie-ant-plugin-1.3.2-jar-with-dependencies.jar" />
         <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
@@ -264,7 +264,7 @@ Ant section:
   <target name="debbie-clean">
     <taskdef name="debbie-clean-task" classname="org.nocrala.tools.debbie.ant.CleanAntTask">
       <classpath>
-        <pathelement location="lib/debbie-ant-plugin-1.3.0-jar-with-dependencies.jar" />
+        <pathelement location="lib/debbie-ant-plugin-1.3.2-jar-with-dependencies.jar" />
         <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
@@ -289,7 +289,7 @@ Ant section:
   <target name="debbie-rebuild">
     <taskdef name="debbie-rebuild-task" classname="org.nocrala.tools.debbie.ant.RebuildAntTask">
       <classpath>
-        <pathelement location="lib/debbie-ant-plugin-1.3.0-jar-with-dependencies.jar" />
+        <pathelement location="lib/debbie-ant-plugin-1.3.2-jar-with-dependencies.jar" />
         <pathelement location="lib/postgresql-42.2.5.jre6.jar" />
       </classpath>
     </taskdef>
