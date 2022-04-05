@@ -180,8 +180,8 @@ The full list of configuration properties is shown below:
 | sourcedir                | The base folder for the database source | -- |
 | targetversion            | The version that Debbie should produce | -- |
 | datascenario             | An optional data scenario to produce | -- |
-| layeredbuild             | Is the build layered or non-layered? | true |
-| layeredscenario          | Is the scenario layered or non-layered? | false |
+| layeredbuild             | Is the build layered? | true |
+| layeredscenario          | Is the scenario layered? | false |
 | onbuilderror             | On build error: stop or continue | stop |
 | oncleanerror             | On clean error: stop or continue | continue |
 | localproperties          | Location of the local properties, if any | -- |
