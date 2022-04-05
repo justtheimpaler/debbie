@@ -1,9 +1,12 @@
 package org.nocrala.tools.debbie.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.nocrala.tools.debbie.Constants;
 import org.nocrala.tools.debbie.executor.Feedback;
 
 public class MojoFeedback implements Feedback {
+
+  public static final String MOJO_ERROR_MESSAGE = Constants.DEBBIE_NAME + " operation failed";
 
   private AbstractMojo mojo;
 

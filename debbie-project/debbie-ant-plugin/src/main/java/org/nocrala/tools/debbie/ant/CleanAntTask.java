@@ -6,8 +6,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.nocrala.tools.debbie.BuildInformation;
 import org.nocrala.tools.debbie.Configuration;
-import org.nocrala.tools.debbie.RawParametersProvider;
 import org.nocrala.tools.debbie.Configuration.ConfigurationException;
+import org.nocrala.tools.debbie.Constants;
+import org.nocrala.tools.debbie.RawParametersProvider;
 import org.nocrala.tools.debbie.executor.SQLExecutor;
 import org.nocrala.tools.debbie.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.debbie.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -21,7 +22,6 @@ import org.nocrala.tools.debbie.utils.OUtil;
 public class CleanAntTask extends Task implements RawParametersProvider {
 
   private static final String OPERATION = "Clean";
-  private static final String ERROR_MESSAGE = "Database clean failed";
 
   // Ant parameters
 
@@ -52,7 +52,7 @@ public class CleanAntTask extends Task implements RawParametersProvider {
 
     AntFeedback feedback = new AntFeedback(this);
 
-    feedback.info("Database Builder " + BuildInformation.PROJECT_VERSION + " (build "
+    feedback.info(Constants.DEBBIE_NAME + " " + BuildInformation.PROJECT_VERSION + " (build "
         + BuildInformation.PROJECT_BUILD_ID + ")" + " - " + OPERATION);
 
     File basedir = new File(".");
@@ -61,7 +61,7 @@ public class CleanAntTask extends Task implements RawParametersProvider {
     try {
       config = new Configuration(basedir, feedback, this);
     } catch (ConfigurationException e1) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     }
 
     File sourceDir = FUtil.relativize(basedir, config.getDatabaseSourceDir());
@@ -73,24 +73,24 @@ public class CleanAntTask extends Task implements RawParametersProvider {
     try {
       source = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     }
 
     SQLExecutor sqlExecutor;
     try {
       sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     } catch (CouldNotConnectToDatabaseException e) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     }
 
     try {
       source.clean(config.getTargetVersion(), sqlExecutor);
     } catch (CouldNotReadSQLScriptException e) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {
-      throw new BuildException(ERROR_MESSAGE);
+      throw new BuildException(AntFeedback.ERROR_MESSAGE);
     } finally {
       try {
         sqlExecutor.close();

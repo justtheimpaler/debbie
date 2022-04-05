@@ -10,8 +10,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.nocrala.tools.debbie.BuildInformation;
 import org.nocrala.tools.debbie.Configuration;
-import org.nocrala.tools.debbie.RawParametersProvider;
 import org.nocrala.tools.debbie.Configuration.ConfigurationException;
+import org.nocrala.tools.debbie.Constants;
+import org.nocrala.tools.debbie.RawParametersProvider;
 import org.nocrala.tools.debbie.executor.SQLExecutor;
 import org.nocrala.tools.debbie.executor.SQLExecutor.CouldNotConnectToDatabaseException;
 import org.nocrala.tools.debbie.executor.SQLExecutor.CouldNotReadSQLScriptException;
@@ -26,7 +27,6 @@ import org.nocrala.tools.debbie.utils.OUtil;
 public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
 
   private static final String OPERATION = "Rebuild";
-  private static final String MOJO_ERROR_MESSAGE = "Database rebuild failed";
 
   // Parameters
 
@@ -87,14 +87,14 @@ public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
-    feedback.info("Database Builder " + BuildInformation.PROJECT_VERSION + " (build "
+    feedback.info(Constants.DEBBIE_NAME + " " + BuildInformation.PROJECT_VERSION + " (build "
         + BuildInformation.PROJECT_BUILD_ID + ")" + " - " + OPERATION);
 
     Configuration config;
     try {
       config = new Configuration(this.project.getBasedir(), feedback, this);
     } catch (ConfigurationException e1) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     }
 
     File sourceDir = FUtil.relativize(this.project.getBasedir(), config.getDatabaseSourceDir());
@@ -106,24 +106,24 @@ public class RebuildMojo extends AbstractMojo implements RawParametersProvider {
     try {
       source = new Source(config, feedback);
     } catch (InvalidDatabaseSourceException e) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     }
 
     SQLExecutor sqlExecutor;
     try {
       sqlExecutor = new SQLExecutor(config, feedback);
     } catch (InvalidPropertiesFileException e) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     } catch (CouldNotConnectToDatabaseException e) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     }
 
     try {
       source.rebuild(config.getTargetVersion(), sqlExecutor);
     } catch (CouldNotReadSQLScriptException e) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     } catch (SQLScriptAbortedException e) {
-      throw new MojoExecutionException(MOJO_ERROR_MESSAGE);
+      throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
     } finally {
       try {
         sqlExecutor.close();
