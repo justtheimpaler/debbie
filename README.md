@@ -25,8 +25,9 @@ In the simplest form Debbie can prepare a database schema from a SQL source file
 mvn debbie:build
 ```
 
-This command will connect to a database and run the SQL statements in the `build.sql` located in the source folder. 
-The connection details and location of the base source folder are specified in the `pom.xml` file (or Ant properties). They can be overriden by local propertied if these values differ from the project-wide configuration.
+This command will connect to a database and run the SQL statements in the `build.sql` located in the source folder.
+The connection details and location of the base source folder are specified in the `pom.xml` file (or Ant properties). 
+They can be overriden by local properties if these values differ from the project-wide configuration.
 
 
 ## Commands
@@ -122,7 +123,7 @@ The example shown below switches the delimiter from `;` (that can be present in 
 `//` that must show up in a separate line (`solo` modifier). The former is suitable for most SQL statements, while the second one
 is useful for code blocks, typically used in stored procedures and function definitions.
 
-The example switches back and forth between these delimiters. The default delimiter is `;` and, therefore, the first `create table ...` statement will be processed correctly since it ends with it.
+The example shown below (that runs in Oracle) switches back and forth between these delimiters. The default delimiter is `;` and, therefore, the first `create table ...` statement will be processed correctly since it ends with it.
 
 
 ```sql
