@@ -14,7 +14,7 @@ Debbie:
 - Supports project-wide configuration and also team member-specific configuration.
 - Embraces separate databases model (one per team member), as well as unique centralized database model.
 - Can be used in a headless mode in an automated environment for testing or building the application.
-- Supports Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Most other  databases should be supported through JDBC, but are not tested.
+- Supports Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Other databases should be supported through JDBC, but are not tested.
 
 
 ## Example
