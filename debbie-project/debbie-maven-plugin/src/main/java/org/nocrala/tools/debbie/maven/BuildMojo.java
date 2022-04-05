@@ -98,7 +98,7 @@ public class BuildMojo extends AbstractMojo implements RawParametersProvider {
     }
 
     File sourceDir = FUtil.relativize(this.project.getBasedir(), config.getDatabaseSourceDir());
-    feedback.info(OPERATION + " database from: " + sourceDir //
+    feedback.info("Building database from source at: " + sourceDir //
         + " -- target version: " + OUtil.coalesce(config.getTargetVersion(), "n/a") //
         + " -- data scenario: " + OUtil.coalesce(config.getDataScenario(), "no scenario"));
 

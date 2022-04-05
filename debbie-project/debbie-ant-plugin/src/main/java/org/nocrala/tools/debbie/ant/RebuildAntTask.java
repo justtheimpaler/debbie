@@ -65,7 +65,7 @@ public class RebuildAntTask extends Task implements RawParametersProvider {
     }
 
     File sourceDir = FUtil.relativize(basedir, config.getDatabaseSourceDir());
-    feedback.info(OPERATION + " database from: " + sourceDir //
+    feedback.info("Rebuilding database from source at: " + sourceDir //
         + " -- target version: " + OUtil.coalesce(config.getTargetVersion(), "n/a") //
         + " -- data scenario: " + OUtil.coalesce(config.getDataScenario(), "no scenario"));
 
