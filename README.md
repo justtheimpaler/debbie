@@ -1,6 +1,6 @@
 # Debbie
 
-Debbie prepares database schemas from source SQL files stored in the source code repository of a project.
+Debbie prepares and reinitializes database schemas from SQL files stored in the source code repository of a project to bring them to a known baseline state.
 
 
 ## Features
