@@ -248,7 +248,7 @@ The full list of configuration properties is shown below:
 
 ## Appendix 2 - Maven Example
 
-A typical Maven configuration could look like:
+A typical Maven configuration section could look like:
 
 ```xml
   <plugin>
@@ -257,12 +257,7 @@ A typical Maven configuration could look like:
     <version>1.3.2</version>
     <configuration>
       <sourcedir>src/database</sourcedir>
-      <targetversion>1.2.3</targetversion>
-      <datascenario>feature-188</datascenario>
-      <layeredbuild>true</layeredbuild>
-      <layeredscenario>false</layeredscenario>
-      <onbuilderror>stop</onbuilderror>
-      <oncleanerror>continue</oncleanerror>
+      <targetversion>1.0.0</targetversion>
       <localproperties>src/database/debbie-local.properties</localproperties>
     </configuration>
     <dependencies>
@@ -274,6 +269,54 @@ A typical Maven configuration could look like:
     </dependencies>
   </plugin>
 ```
+
+If we don't want to type the database credentials in the `pom.xml` file (as in this case) we can place them in
+the `debbie-local.properties` file, that could look like:
+
+```properties
+jdbcdriverclass=org.postgresql.Driver
+jdbcurl=jdbc:postgresql://192.168.56.213:5432/mypostgresql?currentSchema=db1
+jdbcusername=myusername
+jdbcpassword=mypassword
+```
+
+A full configuration with all properties in the Maven `pom.xml` file could look like:
+
+```xml
+  <plugin>
+    <groupId>org.nocrala.tools.database.debbie</groupId>
+    <artifactId>debbie-maven-plugin</artifactId>
+    <version>1.3.2</version>
+    <configuration>
+      <sourcedir>src/database</sourcedir>
+      <targetversion>1.15.3</targetversion>
+      <datascenario>feature-188</datascenario>
+      <layeredbuild>true</layeredbuild>
+      <layeredscenario>false</layeredscenario>
+      <onbuilderror>stop</onbuilderror>
+      <oncleanerror>continue</oncleanerror>
+      <localproperties>src/database/debbie-local.properties</localproperties>
+      <delimiter>;</delimiter>
+      <solodelimiter>true</solodelimiter>
+      <casesensitivedelimiter>false</casesensitivedelimiter>
+      <treatwarningas>warn</treatwarningas>
+      <jdbcdriverclass>org.postgresql.Driver</jdbcdriverclass>
+      <jdbcurl>jdbc:postgresql://192.168.56.213:5432/mypostgresql?currentSchema=db1</jdbcurl>
+      <jdbcusername>myusername</jdbcusername>
+      <jdbcpassword>mypassword</jdbcpassword>
+    </configuration>
+    <dependencies>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.2.5.jre6</version>
+      </dependency>
+    </dependencies>
+  </plugin>
+```
+
+In this case, any property present in the `src/database/debbie-local.properties` file will override the Maven configuration.
+
 
 ## Appendix 3 - Ant Example
 
