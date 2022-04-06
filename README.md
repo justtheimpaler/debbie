@@ -131,12 +131,15 @@ src/             when building...
 
 If we assume the target version (specified in the config) is `1.1.0` then a `debbie:build` command will execute the first three `build.sql` files in
 ascending order and will ignore the last one (corresponding to version 1.2.0). A `debbie:clean` command would run the corresponding
-`clean.sql` files (the first three) in reverse ordering. A `debbie:rebuild` command will execute the full clean sequence 
+`clean.sql` files (the first three) in reverse ordering. A `debbie:rebuild` command will execute the full clean sequence
 followed by the full build sequence.
 
 By default SQL scripts are considered "layered"; this means that each version assumes the previous SQL scripts were already run
 in the database. Debbie also supports "non-layered" builds, where each `build.sql` file includes the entire schema; in this case
 Debbie won't run previous SQL scripts, but only the specified version. This is set up in the configuration properties.
+
+The ordering of versions number sequences is handled by [Aversion](https://github.com/justtheimpaler/aversion). Aversion handles dotted format ordering,
+numeric and alphabetic ordering and also supports suffixes such as `-SNAPSHOT` gracefully.
 
 
 ## Data Scenarios
