@@ -96,24 +96,25 @@ folder in the project is set up as `src/database`, then the database source stru
 
 ```
 src/             when building...
-  database/           v
-    1.0.0/            |
-      build.sql     <-+
-      clean.sql       |  <-+
-    1.0.2/            |    |
-      build.sql     <-+    |
-      clean.sql       |  <-+
-    1.1.0/            |    |
-      build.sql     <-+    |
-      clean.sql          <-+
-    1.2.0/                 |
-      build.sql            ^
-      clean.sql       when cleaning...
+  database/           v                       +----+
+    1.0.0/            |                       |    |
+      build.sql     <-+                     <-+    |
+      clean.sql       |  <-+                  |  <-+
+    1.0.2/            |    |                  |    |
+      build.sql     <-+    |                <-+    |
+      clean.sql       |  <-+                  |  <-+
+    1.1.0/            |    |                  |    |
+      build.sql     <-+    |                <-+    |
+      clean.sql          <-+                     <-+
+    1.2.0/                 |                       |
+      build.sql            ^                       ^
+      clean.sql       when cleaning...    when rebuilding...
 ```
 
 If we assume the target version (specified in the config) is `1.1.0` then a `debbie:build` command will execute the first three `build.sql` files in
 ascending order and will ignore the last one (corresponding to version 1.2.0). A `debbie:clean` command would run the corresponding
-`clean.sql` files (the first three) in reverse ordering.
+`clean.sql` files (the first three) in reverse ordering. A `debbie:rebuild` command will execute the full clean sequence 
+followed by the full build sequence.
 
 By default SQL scripts are considered "layered"; this means that each version assumes the previous SQL scripts were already run
 in the database. Debbie also supports "non-layered" builds, where each `build.sql` file includes the entire schema; in this case
