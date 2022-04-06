@@ -275,12 +275,12 @@ the `debbie-local.properties` file, that could look like:
 
 ```properties
 jdbcdriverclass=org.postgresql.Driver
-jdbcurl=jdbc:postgresql://192.168.56.213:5432/mypostgresql?currentSchema=db1
+jdbcurl=jdbc:postgresql://192.168.56.213:5432/mypostgresql
 jdbcusername=myusername
 jdbcpassword=mypassword
 ```
 
-A full configuration with all properties in the Maven `pom.xml` file could look like:
+Alternatively, a full configuration with all properties in the Maven `pom.xml` file could look like:
 
 ```xml
   <plugin>
@@ -315,7 +315,7 @@ A full configuration with all properties in the Maven `pom.xml` file could look 
   </plugin>
 ```
 
-In this case, any property present in the `src/database/debbie-local.properties` file will override the Maven configuration.
+Anyway, any property present in the `src/database/debbie-local.properties` file will override the Maven configuration.
 
 
 ## Appendix 3 - Ant Example
