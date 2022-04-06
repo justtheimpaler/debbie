@@ -58,6 +58,8 @@ mvn debbie:clean
 
 These commands will connect to the database and run the SQL statements. The location of the base source folder (`src/database`), the target version (`1.0.0`), and the database connection details are specified in Debbie's configuration.
 
+**Note**: It's up to the developer to decide which SQL statements to include in the `build.sql` and `clean.sql` files. Debbie assumes the former will populate the database and the latter will remove them from the database schema(s).
+
 
 ## Commands
 
@@ -77,9 +79,9 @@ There are also three corresponding Ant tasks for each one. See example in Append
 By default, errors during the *build* sequence are considered fatal and Debbie will stop the execution. Errors during the *clean* sequence are by default considered
 non-fatal; Debbie will display them but will continue the execution normally. In practice a clean sequence can be run multiple times in a row. This can be useful if the developer considers the database objects dependencies will sort themselves out if `clean` is run enough times in a row.
 
-Warnings messages are displayed, by default. They can be useful in some databases like Sybase (SAP ASE), where the execution plan of a query is displayed in the warnings output stream. In other databases (such as DB2) they can be quite serious, and maybe should be treated as errors.
+Warnings messages are displayed by default. They can be useful in some databases like Sybase (SAP ASE), where the execution plan of a query is displayed in the warnings output stream. In other databases (such as DB2) they can be quite serious, and maybe should be treated as errors.
 
-The handling of errors in the build and clean sequences as well as the treatment of warnings can be changed throught the configuration properties.
+The handling of errors in the build and clean sequences as well as the treatment of warnings can be changed through the configuration properties.
 
 
 ## Versioning
@@ -149,7 +151,7 @@ In this case only one data scenario (either `bug-1732`, `feature-188`, or `offic
 ## SQL Delimiters
 
 The example shown below switches the delimiter from `;` (that can be present in the same line as the SQL statement) to
-`//` that must show up in a separate line (`solo` modifier). The former is suitable for most SQL statements, while the second one
+`//` that must show up in a separate line (`solo` modifier). The former is suitable for most SQL statements, while the latter
 is useful for code blocks, typically used in stored procedures and function definitions.
 
 The example shown below (that runs in Oracle) switches back and forth between these delimiters. The default delimiter is `;` and, therefore, the first `create table ...` statement will be processed correctly since it ends with it.
