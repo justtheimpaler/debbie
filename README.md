@@ -29,7 +29,7 @@ Debbie:
 - Supports project-wide configuration and also team member-specific configuration.
 - Embraces separate databases model (one per team member), as well as unique centralized database model.
 - Can be used in headless mode to prepare an automated environment for testing or when building the application.
-- Supports Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Other databases should be supported through JDBC, but are not tested.
+- Supports Oracle, DB2, PostgreSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Other databases should be supported through JDBC, but are not tested.
 
 
 ## Example
@@ -58,7 +58,7 @@ mvn debbie:clean
 
 These commands will connect to the database and run the SQL statements. The location of the base source folder (`src/database`), the target version (`1.0.0`), and the database connection details are specified in Debbie's configuration.
 
-**Note**: It's up to the developer to decide which SQL statements to include in the `build.sql` and `clean.sql` files. Debbie assumes the former will populate the database and the latter will remove them from the database schema(s).
+**Note**: It's up to the developer to decide which SQL statements to include in the `build.sql` and `clean.sql` files. Debbie assumes the former will populate the database and the latter will "undo" the database changes.
 
 
 ## Commands
@@ -67,7 +67,7 @@ Debbie implements three commands:
 
 - `build`: to populate the database schema.
 - `clean`: to clean the database schema.
-- `rebuild`: to clean and build the database schema.
+- `rebuild`: to clean and build the database schema in one command.
 
 When used in Maven they take the form: `mvn debbie:build`, `mvn debbie:clean`, or `mvn debbie:rebuild` respectively.
 
