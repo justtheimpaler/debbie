@@ -58,7 +58,25 @@ mvn debbie:clean
 
 These commands will connect to the database and run the SQL statements. The location of the base source folder (`src/database`), the target version (`1.0.0`), and the database connection details are specified in Debbie's configuration.
 
-**Note**: It's up to the developer to decide which SQL statements to include in the `build.sql` and `clean.sql` files. Debbie assumes the former will populate the database and the latter will "undo" the database changes.
+It's up to the developer to decide which SQL statements to include in the `build.sql` and `clean.sql` files. Debbie assumes the former will populate
+the database and the latter will "undo" the database changes. As an example, the `build.sql` file could include:
+
+```sql
+create table employee (
+  id number(9) primary key not null,
+  name varchar2(20)
+);
+
+insert into employee (id, name) values (45, 'Anne');
+insert into employee (id, name) values (123, 'Alice');
+insert into employee (id, name) values (6097, 'Steve');
+```
+
+and the `clean.sql` file could include:
+
+```sql
+drop table employee;
+```
 
 
 ## Commands
