@@ -13,7 +13,7 @@ Debbie prepares a database schema using SQL files, to bring it to a known baseli
 - [SQL Delimiters](#sql-delimiters)
 - [Programatic Use](#programatic-use)
 - [Pending Features](#pending-features)
-- [Appendix 1 - Configuration properties](#appendix-1---configuration-properties)
+- [Appendix 1 - Configuration Properties](#appendix-1---configuration-properties)
 - [Appendix 2 - Maven Example](#appendix-2---maven-example)
 - [Appendix 3 - Ant Example](#appendix-3---ant-example)
 
@@ -22,27 +22,41 @@ Debbie prepares a database schema using SQL files, to bring it to a known baseli
 
 Debbie:
 
-- Can be used from Maven and Ant (or any IDE that uses these tools as well).
-- Can follows a source folder structure that matches an evolving schema over the life of the project.
-- Supports multiple data scenarios to reset the database to any baseline data scenario that could be required for testing or debugging purposes.
+- Can be used from Maven and Ant (or any IDE that uses these tools).
+- Can follow a source folder structure that matches an evolving schema over the life of the project.
+- Supports multiple data scenarios to reset the database to a baseline data scenario that could be required for testing or debugging purposes.
 - Handles stored procedures gracefully.
 - Supports project-wide configuration and also team member-specific configuration.
 - Embraces separate databases model (one per team member), as well as unique centralized database model.
-- Can be used in a headless mode in an automated environment for testing or building the application.
+- Can be used in headless mode to prepare an automated environment for testing or when building the application.
 - Supports Oracle, DB2, PostgrSQL, SQL Server, MariaDB, MySQL, SAP ASE, H2, HyperSQL, Derby. Other databases should be supported through JDBC, but are not tested.
 
 
 ## Example
 
-In the simplest form Debbie can prepare a database schema from a SQL source file using (Maven example):
+In the simplest form Debbie can prepare a database schema from a SQL source file. If we have the following folder structure in the project:
+
+```
+src/
+  database/
+    1.0.0/
+      build.sql
+      clean.sql
+```
+
+Then we can run the `build.sql` file with Maven using:
 
 ```bash
 mvn debbie:build
 ```
 
-This command will connect to a database and run the SQL statements in the `build.sql` located in the source folder.
-The connection details and location of the base source folder are specified in the `pom.xml` file (or Ant properties). 
-They can be overriden by local properties if these values differ from the project-wide configuration.
+We can also run the `clean.sql` file with Maven using:
+
+```bash
+mvn debbie:clean
+```
+
+These commands will connect to the database and run the SQL statements. The location of the base source folder (`src/database`), the target version (`1.0.0`), and the database connection details are specified in Debbie's configuration.
 
 
 ## Commands
@@ -55,7 +69,7 @@ Debbie implements three commands:
 
 When used in Maven they take the form: `mvn debbie:build`, `mvn debbie:clean`, or `mvn debbie:rebuild` respectively.
 
-There are also three corresponding Ant tasks for each one.
+There are also three corresponding Ant tasks for each one. See example in Appendix.
 
 
 ## Error Handling
@@ -79,24 +93,24 @@ execute all `clean.sql` files from the target version down to the initial versio
 folder in the project is set up as `src/database`, then the database source structure could look like:
 
 ```
-src/               building...
+src/             when building...
   database/           v
     1.0.0/            |
       build.sql     <-+
-      clean.sql       |     <-+
-    1.0.2/            |       |
-      build.sql     <-+       |
-      clean.sql       |     <-+
-    1.1.0/            |       |
-      build.sql     <-+       |
-      clean.sql             <-+
-    1.2.0/                    |
-      build.sql               ^
-      clean.sql            cleaning...
+      clean.sql       |  <-+
+    1.0.2/            |    |
+      build.sql     <-+    |
+      clean.sql       |  <-+
+    1.1.0/            |    |
+      build.sql     <-+    |
+      clean.sql          <-+
+    1.2.0/                 |
+      build.sql            ^
+      clean.sql       when cleaning...
 ```
 
 If we assume the target version (specified in the config) is `1.1.0` then a `debbie:build` command will execute the first three `build.sql` files in
-ascending sequence and will ignore the last one (corresponding to version 1.2.0). A `debbie:clean` command would run the corresponding
+ascending order and will ignore the last one (corresponding to version 1.2.0). A `debbie:clean` command would run the corresponding
 `clean.sql` files (the first three) in reverse ordering.
 
 By default SQL scripts are considered "layered"; this means that each version assumes the previous SQL scripts were already run
@@ -185,7 +199,7 @@ Debbie's API is not yet documented.
 Multi-line comments (such as `/* multi-line comment */`) are not supported. Only single-line comments (that start with `--`) are supported.
 
 
-## Appendix 1 - Configuration properties
+## Appendix 1 - Configuration Properties
 
 The basic properties are typically set up in the `pom.xml` file (or Ant script) and represent the project-wide set up. These properties can be superseded or complemented by a local properties file that each team member can tweak separately.
 
@@ -248,7 +262,19 @@ The following example show Debbie's three taks defined as Ant tasks. They can be
 ant debbie-build
 ```
 
-Ant section:
+or
+
+```bash
+ant debbie-clean
+```
+
+or
+
+```bash
+ant debbie-rebuild
+```
+
+These Ant tasks can be defined in the `build.xml` file as shown below (example):
 
 ```xml
   <target name="debbie-build">
@@ -325,6 +351,8 @@ Ant section:
                       localproperties="local.properties" />
   </target>
 ```
+
+
 
 
 
