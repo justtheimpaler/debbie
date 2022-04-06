@@ -1,6 +1,21 @@
 # Debbie
 
-Debbie prepares and reinitializes database schemas from SQL files stored in the source code repository of a project to bring them to a known baseline state.
+Debbie prepares a database schema using SQL files, to bring it to a known baseline state.
+
+### Table of Contents
+
+- [Features](#features)
+- [Example](#example)
+- [Commands](#commands)
+- [Error Handling](#error-handling)
+- [Versioning](#versioning)
+- [Data Scenarios](#data-scenarios)
+- [SQL Delimiters](#sql-delimiters)
+- [Programatic Use](#programatic-use)
+- [Pending Features](#pending-features)
+- [Appendix 1 - Configuration properties](#appendix-1---configuration-properties)
+- [Appendix 2 - Maven Example](#appendix-2---maven-example)
+- [Appendix 3 - Ant Example](#appendix-3---ant-example)
 
 
 ## Features
@@ -43,31 +58,41 @@ When used in Maven they take the form: `mvn debbie:build`, `mvn debbie:clean`, o
 There are also three corresponding Ant tasks for each one.
 
 
+## Error Handling
+
+By default, errors during the *build* sequence are considered fatal and Debbie will stop the execution. Errors during the *clean* sequence are by default considered
+non-fatal; Debbie will display them but will continue the execution normally. In practice a clean sequence can be run multiple times in a row. This can be useful if the developer considers the database objects dependencies will sort themselves out if `clean` is run enough times in a row.
+
+Warnings messages are displayed, by default. They can be useful in some databases like Sybase (SAP ASE), where the execution plan of a query is displayed in the warnings output stream. In other databases (such as DB2) they can be quite serious, and maybe should be treated as errors.
+
+The handling of errors in the build and clean sequences as well as the treatment of warnings can be changed throught the configuration properties.
+
+
 ## Versioning
 
 This is an optional feature that can be useful to some projects.
 
-Debbie supports the evolution over time of a database with the use of separate folders for each version. On the flip side, if no versioning is needed the entire database source code can be stored in a single folder called `1.0.0` or similar.
+Debbie supports the evolution of a database over time with the use of separate folders for each version. On the flip side, if no versioning is needed the entire database source code can be stored in a single folder called `1.0.0` (or similar).
 
 When building the database, Debbie will run in sequence all `build.sql` files in the source code until the specified version. When cleaning the database, Debbie will
 execute all `clean.sql` files from the target version down to the initial version, in reverse order. For example, if the database source
 folder in the project is set up as `src/database`, then the database source structure could look like:
 
 ```
-src/
-  database/
-    1.0.0/
-      build.sql
-      clean.sql
-    1.0.2/
-      build.sql
-      clean.sql
-    1.1.0/
-      build.sql
-      clean.sql
-    1.2.0/
-      build.sql
-      clean.sql
+src/               building...
+  database/           v
+    1.0.0/            |
+      build.sql     <-+
+      clean.sql       |     <-+
+    1.0.2/            |       |
+      build.sql     <-+       |
+      clean.sql       |     <-+
+    1.1.0/            |       |
+      build.sql     <-+       |
+      clean.sql             <-+
+    1.2.0/                    |
+      build.sql               ^
+      clean.sql            cleaning...
 ```
 
 If we assume the target version (specified in the config) is `1.1.0` then a `debbie:build` command will execute the first three `build.sql` files in
@@ -77,16 +102,6 @@ ascending sequence and will ignore the last one (corresponding to version 1.2.0)
 By default SQL scripts are considered "layered"; this means that each version assumes the previous SQL scripts were already run
 in the database. Debbie also supports "non-layered" builds, where each `build.sql` file includes the entire schema; in this case
 Debbie won't run previous SQL scripts, but only the specified version. This is set up in the configuration properties.
-
-
-## Error Handling
-
-By default, errors during the *build* sequence are considered fatal and Debbie will stop the execution. Errors during the *clean* sequence are by default considered
-non-fatal; Debbie will display them but will continue the execution normally. In practice a clean sequence can be run multiple times in a row. This can be useful if the developer considers the database objects dependencies will sort themselves out if `clean` is run enough times in a row.
-
-Warnings messages are displayed, by default. They can be useful in some databases like Sybase (SAP ASE), where the execution plan of a query is displayed in the warnings output stream. In other databases (such as DB2) they can be quite serious, and maybe should be treated as errors.
-
-The handling of errors in the build and clean sequences as well as the treatment of warnings can be changed throught the configuration properties.
 
 
 ## Data Scenarios
@@ -201,28 +216,28 @@ The full list of configuration properties is shown below:
 A typical Maven configuration could look like:
 
 ```xml
-          <plugin>
-            <groupId>org.nocrala.tools.database.debbie</groupId>
-            <artifactId>debbie-maven-plugin</artifactId>
-            <version>1.3.2</version>
-            <configuration>
-              <sourcedir>src/database</sourcedir>
-              <targetversion>1.2.3</targetversion>
-              <datascenario>feature-188</datascenario>
-              <layeredbuild>true</layeredbuild>
-              <layeredscenario>false</layeredscenario>
-              <onbuilderror>stop</onbuilderror>
-              <oncleanerror>continue</oncleanerror>
-              <localproperties>src/database/debbie-local.properties</localproperties>
-            </configuration>
-            <dependencies>
-              <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.2.5.jre6</version>
-              </dependency>
-            </dependencies>
-          </plugin>
+  <plugin>
+    <groupId>org.nocrala.tools.database.debbie</groupId>
+    <artifactId>debbie-maven-plugin</artifactId>
+    <version>1.3.2</version>
+    <configuration>
+      <sourcedir>src/database</sourcedir>
+      <targetversion>1.2.3</targetversion>
+      <datascenario>feature-188</datascenario>
+      <layeredbuild>true</layeredbuild>
+      <layeredscenario>false</layeredscenario>
+      <onbuilderror>stop</onbuilderror>
+      <oncleanerror>continue</oncleanerror>
+      <localproperties>src/database/debbie-local.properties</localproperties>
+    </configuration>
+    <dependencies>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>42.2.5.jre6</version>
+      </dependency>
+    </dependencies>
+  </plugin>
 ```
 
 ## Appendix 3 - Ant Example
@@ -236,8 +251,6 @@ ant debbie-build
 Ant section:
 
 ```xml
-  <loadproperties srcFile="local.properties" />
-
   <target name="debbie-build">
     <taskdef name="debbie-build-task" classname="org.nocrala.tools.debbie.ant.BuildAntTask">
       <classpath>
