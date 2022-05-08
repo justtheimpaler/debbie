@@ -46,29 +46,6 @@
 
   <build>
     <plugins>
-
-      <!-- Set compiler to Java 8 -->
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-toolchains-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>toolchain</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <toolchains>
-            <jdk>
-              <version>8</version>
-              <vendor>oracle</vendor>
-            </jdk>
-          </toolchains>
-        </configuration>
-      </plugin>
       
       <!-- Enable the templating plugin to generate the BuildInformation class -->
 
