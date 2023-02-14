@@ -31,6 +31,9 @@ public class BuildMojo extends AbstractMojo implements RawParametersProvider {
   // Parameters
 
   @Parameter()
+  private String skip = null;
+
+  @Parameter()
   private String sourcedir = null;
 
   @Parameter()
@@ -87,6 +90,10 @@ public class BuildMojo extends AbstractMojo implements RawParametersProvider {
 
     MojoFeedback feedback = new MojoFeedback(this);
 
+    if (this.skip(feedback)) {
+      return;
+    }
+
     feedback.info(Constants.DEBBIE_NAME + " " + BuildInformation.PROJECT_VERSION + " (build "
         + BuildInformation.PROJECT_BUILD_ID + ")" + " - " + OPERATION);
 
@@ -134,7 +141,23 @@ public class BuildMojo extends AbstractMojo implements RawParametersProvider {
 
   }
 
+  private boolean skip(final MojoFeedback feedback) throws MojoExecutionException {
+    if ("true".equals(this.skip)) {
+      return true;
+    }
+    if (this.skip == null || skip.trim().isEmpty() || "false".equals(this.skip)) {
+      return false;
+    }
+    feedback.error(
+        "Invalid value for configuration property 'skip'. Must be 'true' or 'false' but found '" + this.skip + "'.");
+    throw new MojoExecutionException(MojoFeedback.MOJO_ERROR_MESSAGE);
+  }
+
   // RawParametersProvider
+
+  public String getSkip() {
+    return skip;
+  }
 
   public String getSourcedir() {
     return sourcedir;
