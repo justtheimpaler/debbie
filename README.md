@@ -247,6 +247,7 @@ The full list of configuration properties is shown below:
 | jdbcurl                  | The JDBC URL | -- |
 | jdbcusername             | The JDBC username | -- |
 | jdbcpassword             | The JDBC passwod | -- |
+| skip                     | Use 'true' to skip the execution of Debbie (no parameter validation will take place) | false |
 
 
 ## Appendix 2 - Maven Example
